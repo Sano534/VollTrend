@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VollTrend</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: var(--tg-theme-bg-color, #ffffff);
+      color: var(--tg-theme-text-color, #000000);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .training {
+      background: var(--tg-theme-secondary-bg-color, #f2f2f2);
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 20px;
+    }
+
+    .button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 12px;
+      background: var(--tg-theme-button-color, #2481cc);
+      color: var(--tg-theme-button-text-color, #ffffff);
+      font-size: 16px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🏐 VollTrend</h1>
+
+  <div class="training">
+
+    <h2>Тренировка</h2>
+
+    <p>📅 18 августа</p>
+    <p>⏰ 19:00</p>
+    <p>📍 Спортзал №1</p>
+
+    <p>👥 Мест: <b>12</b></p>
+
+    <button class="button" onclick="joinTraining()">
+      Записаться
+    </button>
+
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+
+    tg.ready();
+    tg.expand();
+
+    function joinTraining() {
+
+      const user = tg.initDataUnsafe?.user;
+
+      if (!user) {
+        alert("Открой приложение через Telegram");
+        return;
+      }
+
+      const username = user.username
+        ? "@" + user.username
+        : user.first_name;
+
+      tg.showAlert(
+        "Ты записан на тренировку, " + username
+      );
+    }
+  </script>
+
+</body>
+</html>
