@@ -37,6 +37,11 @@
       margin: 10px 0 25px;
     }
 
+    h2 {
+      margin-top: 0;
+      font-size: 23px;
+    }
+
     .training {
       background:
         var(
@@ -46,11 +51,6 @@
 
       border-radius: 20px;
       padding: 22px;
-    }
-
-    h2 {
-      margin-top: 0;
-      font-size: 24px;
     }
 
     .info {
@@ -80,7 +80,7 @@
 
     button {
       width: 100%;
-      padding: 16px;
+      padding: 15px;
       margin-top: 15px;
 
       border: none;
@@ -98,7 +98,7 @@
           #ffffff
         );
 
-      font-size: 17px;
+      font-size: 16px;
       font-weight: bold;
     }
 
@@ -121,9 +121,76 @@
       line-height: 1.6;
     }
 
-    .payment-title {
-      font-size: 19px;
+    .admin {
+      display: none;
+
+      margin-top: 25px;
+      padding: 18px;
+
+      border-radius: 18px;
+
+      background:
+        var(
+          --tg-theme-secondary-bg-color,
+          #f2f2f2
+        );
+    }
+
+    .admin-title {
+      font-size: 22px;
       font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 18px;
+      margin-bottom: 10px;
+    }
+
+    .user-card {
+      padding: 14px;
+      margin-top: 10px;
+
+      border-radius: 13px;
+
+      background:
+        var(
+          --tg-theme-bg-color,
+          #ffffff
+        );
+    }
+
+    .user-name {
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .user-status {
+      margin-top: 6px;
+      font-size: 15px;
+    }
+
+    .paid {
+      color: #16803c;
+      font-weight: bold;
+    }
+
+    .not-paid {
+      color: #c62828;
+      font-weight: bold;
+    }
+
+    .admin-button {
+      margin-top: 10px;
+      padding: 11px;
+      font-size: 14px;
+    }
+
+    .empty {
+      opacity: 0.6;
+      padding: 10px 0;
     }
 
   </style>
@@ -136,15 +203,16 @@
   <h1>🏐 VollTrend</h1>
 
 
-  <div class="training">
+  <!-- ================================= -->
+  <!-- ТРЕНИРОВКА -->
+  <!-- ================================= -->
 
+  <div class="training">
 
     <h2>
       Волейбольная тренировка
     </h2>
 
-
-    <!-- ИНФОРМАЦИЯ О ТРЕНИРОВКЕ -->
 
     <div class="info">
 
@@ -163,8 +231,6 @@
     </div>
 
 
-    <!-- КОЛИЧЕСТВО МЕСТ -->
-
     <div class="places">
 
       👥 Мест:
@@ -175,8 +241,6 @@
 
     </div>
 
-
-    <!-- ОЧЕРЕДЬ -->
 
     <div class="queue">
 
@@ -189,54 +253,40 @@
     </div>
 
 
-    <!-- СТАТУС -->
-
     <div
       id="status"
       class="status"
     >
-
       Загрузка...
-
     </div>
 
-
-    <!-- КНОПКА ЗАПИСИ -->
 
     <button
       id="joinButton"
     >
-
       Записаться
-
     </button>
 
 
-    <!-- КНОПКА ОПЛАТЫ -->
+    <!-- ================================= -->
+    <!-- ОПЛАТА -->
+    <!-- ================================= -->
 
     <button
       id="paymentButton"
     >
-
       💳 Как оплатить
-
     </button>
 
-
-    <!-- ИНСТРУКЦИЯ ПО ОПЛАТЕ -->
 
     <div
       id="paymentInfo"
       class="payment"
     >
 
-      <div class="payment-title">
+      <b>💳 Как оплатить</b>
 
-        💳 Как оплатить
-
-      </div>
-
-      <br>
+      <br><br>
 
       1️⃣ Стоимость тренировки:
       <b>400 ₽</b>
@@ -251,8 +301,8 @@
 
       <br><br>
 
-      3️⃣ Получите у администратора
-      реквизиты для оплаты.
+      3️⃣ Получите реквизиты
+      для оплаты.
 
       <br><br>
 
@@ -261,8 +311,8 @@
 
       <br><br>
 
-      5️⃣ После оплаты сообщите
-      администратору.
+      5️⃣ Сообщите администратору
+      об оплате.
 
       <br><br>
 
@@ -271,6 +321,55 @@
 
     </div>
 
+
+    <!-- ================================= -->
+    <!-- СТАТУС ОПЛАТЫ ПОЛЬЗОВАТЕЛЯ -->
+    <!-- ================================= -->
+
+    <div
+      id="myPaymentStatus"
+      class="status"
+    >
+      💳 Оплата: —
+    </div>
+
+  </div>
+
+
+  <!-- ================================= -->
+  <!-- АДМИН-ПАНЕЛЬ -->
+  <!-- ================================= -->
+
+  <div
+    id="adminPanel"
+    class="admin"
+  >
+
+    <div class="admin-title">
+      👨‍💼 Админ-панель
+    </div>
+
+
+    <div>
+      💰 Стоимость:
+      <b>400 ₽</b>
+    </div>
+
+
+    <div class="section-title">
+      🟢 Основные места
+    </div>
+
+
+    <div id="bookedList"></div>
+
+
+    <div class="section-title">
+      🟡 Очередь
+    </div>
+
+
+    <div id="queueList"></div>
 
   </div>
 
@@ -358,7 +457,7 @@
 
     /*
      * =================================
-     * НАСТРОЙКИ ТРЕНИРОВКИ
+     * НАСТРОЙКИ
      * =================================
      */
 
@@ -374,8 +473,8 @@
       400;
 
 
-    const ADMIN_USERNAME =
-      "@dimka_3948";
+    const ADMIN_ID =
+      "5862653284";
 
 
     const bookingsRef =
@@ -429,21 +528,28 @@
       );
 
 
-    /*
-     * =================================
-     * ПРОВЕРКА TELEGRAM
-     * =================================
-     */
+    const myPaymentStatus =
+      document.getElementById(
+        "myPaymentStatus"
+      );
 
-    if (!telegramUser) {
 
-      status.innerText =
-        "⚠️ Открой приложение через Telegram";
+    const adminPanel =
+      document.getElementById(
+        "adminPanel"
+      );
 
-      joinButton.disabled =
-        true;
 
-    }
+    const bookedList =
+      document.getElementById(
+        "bookedList"
+      );
+
+
+    const queueList =
+      document.getElementById(
+        "queueList"
+      );
 
 
     /*
@@ -467,24 +573,38 @@
       }
 
 
-      if (
-        telegramUser &&
-        telegramUser.first_name
-      ) {
-
-        return telegramUser.first_name;
-
-      }
-
-
-      return "Пользователь";
+      return (
+        telegramUser?.first_name ||
+        "Пользователь"
+      );
 
     }
 
 
     /*
      * =================================
-     * ОБНОВЛЕНИЕ ИНТЕРФЕЙСА
+     * АДМИН
+     * =================================
+     */
+
+    const isAdmin =
+      telegramUser &&
+      String(
+        telegramUser.id
+      ) === ADMIN_ID;
+
+
+    if (isAdmin) {
+
+      adminPanel.style.display =
+        "block";
+
+    }
+
+
+    /*
+     * =================================
+     * ОБНОВЛЕНИЕ
      * =================================
      */
 
@@ -555,7 +675,9 @@
 
 
       /*
-       * Ищем текущего пользователя
+       * =================================
+       * МОЯ ЗАПИСЬ
+       * =================================
        */
 
       let myBooking =
@@ -582,15 +704,7 @@
       }
 
 
-      /*
-       * Пользователь уже записан
-       */
-
       if (myBooking) {
-
-        joinButton.disabled =
-          false;
-
 
         if (
           myBooking.status ===
@@ -639,50 +753,405 @@
         }
 
 
-        return;
+        /*
+         * Статус оплаты
+         */
 
-      }
+        if (
+          myBooking.paid === true
+        ) {
 
-
-      /*
-       * Пользователь ещё не записан
-       */
-
-      if (
-        booked.length <
-        MAX_PLACES
-      ) {
-
-        status.innerText =
-          "🟢 Есть свободные места";
+          myPaymentStatus.innerText =
+            "💳 Оплата: ✅ Оплачено";
 
 
-        joinButton.innerText =
-          "Записаться";
+          myPaymentStatus.className =
+            "status paid";
+
+        }
+
+        else {
+
+          myPaymentStatus.innerText =
+            "💳 Оплата: ❌ Не оплачено";
+
+
+          myPaymentStatus.className =
+            "status not-paid";
+
+        }
 
       }
 
       else {
 
         status.innerText =
-          "🔴 Все 12 мест заняты";
+          booked.length < MAX_PLACES
+
+            ? "🟢 Есть свободные места"
+
+            : "🔴 Все 12 мест заняты";
 
 
         joinButton.innerText =
-          "🟡 Встать в очередь";
+          booked.length < MAX_PLACES
+
+            ? "Записаться"
+
+            : "🟡 Встать в очередь";
+
+
+        myPaymentStatus.innerText =
+          "💳 Оплата: —";
+
+
+        myPaymentStatus.className =
+          "status";
 
       }
 
 
-      joinButton.disabled =
-        false;
+      /*
+       * =================================
+       * АДМИНСКИЙ СПИСОК
+       * =================================
+       */
+
+      if (isAdmin) {
+
+        renderAdminList(
+          booked,
+          queue
+        );
+
+      }
 
     }
 
 
     /*
      * =================================
-     * REALTIME FIREBASE
+     * АДМИНСКИЙ СПИСОК
+     * =================================
+     */
+
+    function renderAdminList(
+      booked,
+      queue
+    ) {
+
+
+      bookedList.innerHTML =
+        "";
+
+
+      queueList.innerHTML =
+        "";
+
+
+      /*
+       * Основные места
+       */
+
+      if (
+        booked.length === 0
+      ) {
+
+        bookedList.innerHTML =
+          '<div class="empty">' +
+          'Пока никто не записан' +
+          '</div>';
+
+      }
+
+
+      booked.forEach(
+
+        (booking, index) => {
+
+          const card =
+            document.createElement(
+              "div"
+            );
+
+
+          card.className =
+            "user-card";
+
+
+          const name =
+            booking.username ||
+            booking.firstName ||
+            "Пользователь";
+
+
+          card.innerHTML = `
+
+            <div class="user-name">
+
+              ${index + 1}.
+              ${escapeHtml(name)}
+
+            </div>
+
+            <div class="user-status">
+
+              ${
+                booking.paid === true
+
+                  ? '<span class="paid">✅ Оплачено</span>'
+
+                  : '<span class="not-paid">❌ Не оплачено</span>'
+              }
+
+            </div>
+
+            <button
+              class="admin-button"
+              data-key="${booking.key}"
+            >
+
+              ${
+                booking.paid === true
+
+                  ? "❌ Отменить оплату"
+
+                  : "✅ Оплачено"
+              }
+
+            </button>
+
+          `;
+
+
+          const button =
+            card.querySelector(
+              ".admin-button"
+            );
+
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              togglePaid(
+                booking.key,
+                booking.paid === true
+              );
+
+            }
+          );
+
+
+          bookedList.appendChild(
+            card
+          );
+
+        }
+
+      );
+
+
+      /*
+       * Очередь
+       */
+
+      if (
+        queue.length === 0
+      ) {
+
+        queueList.innerHTML =
+          '<div class="empty">' +
+          'Очередь пустая' +
+          '</div>';
+
+      }
+
+
+      queue.forEach(
+
+        (booking, index) => {
+
+          const card =
+            document.createElement(
+              "div"
+            );
+
+
+          card.className =
+            "user-card";
+
+
+          const name =
+            booking.username ||
+            booking.firstName ||
+            "Пользователь";
+
+
+          card.innerHTML = `
+
+            <div class="user-name">
+
+              ${index + 1}.
+              ${escapeHtml(name)}
+
+            </div>
+
+            <div class="user-status">
+
+              ${
+                booking.paid === true
+
+                  ? '<span class="paid">✅ Оплачено</span>'
+
+                  : '<span class="not-paid">❌ Не оплачено</span>'
+              }
+
+            </div>
+
+            <button
+              class="admin-button"
+              data-key="${booking.key}"
+            >
+
+              ${
+                booking.paid === true
+
+                  ? "❌ Отменить оплату"
+
+                  : "✅ Оплачено"
+              }
+
+            </button>
+
+          `;
+
+
+          const button =
+            card.querySelector(
+              ".admin-button"
+            );
+
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              togglePaid(
+                booking.key,
+                booking.paid === true
+              );
+
+            }
+          );
+
+
+          queueList.appendChild(
+            card
+          );
+
+        }
+
+      );
+
+    }
+
+
+    /*
+     * =================================
+     * ЗАЩИТА HTML
+     * =================================
+     */
+
+    function escapeHtml(text) {
+
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+    }
+
+
+    /*
+     * =================================
+     * ИЗМЕНЕНИЕ ОПЛАТЫ
+     * =================================
+     */
+
+    async function togglePaid(
+      userKey,
+      currentPaid
+    ) {
+
+
+      if (!isAdmin) {
+
+        tg.showAlert(
+          "Нет доступа."
+        );
+
+        return;
+
+      }
+
+
+      try {
+
+        await runTransaction(
+
+          bookingsRef,
+
+          currentData => {
+
+            if (!currentData) {
+              return;
+            }
+
+
+            if (
+              !currentData[userKey]
+            ) {
+              return;
+            }
+
+
+            currentData[userKey].paid =
+              !currentPaid;
+
+
+            currentData[userKey].paidAt =
+              Date.now();
+
+
+            return currentData;
+
+          }
+
+        );
+
+
+      }
+
+      catch (error) {
+
+        console.error(error);
+
+
+        tg.showAlert(
+          "❌ Не удалось изменить оплату."
+        );
+
+      }
+
+    }
+
+
+    /*
+     * =================================
+     * REALTIME
      * =================================
      */
 
@@ -719,6 +1188,7 @@
 
     async function joinTraining() {
 
+
       if (!telegramUser) {
 
         tg.showAlert(
@@ -747,11 +1217,6 @@
                 currentData || {};
 
 
-              /*
-               * Проверяем,
-               * нет ли уже записи
-               */
-
               const alreadyExists =
                 Object.values(data)
                   .some(
@@ -777,16 +1242,14 @@
                   );
 
 
-              if (alreadyExists) {
+              if (
+                alreadyExists
+              ) {
 
                 return;
 
               }
 
-
-              /*
-               * Считаем основные места
-               */
 
               const booked =
                 Object.values(data)
@@ -808,10 +1271,6 @@
 
                   : "waitlist";
 
-
-              /*
-               * Создаём запись
-               */
 
               const userKey =
                 "user_" +
@@ -852,14 +1311,12 @@
           );
 
 
-        /*
-         * Пользователь уже был записан
-         */
-
-        if (!result.committed) {
+        if (
+          !result.committed
+        ) {
 
           tg.showAlert(
-            "Ты уже записан на эту тренировку."
+            "Ты уже записан."
           );
 
           return;
@@ -867,35 +1324,28 @@
         }
 
 
-        /*
-         * Получаем результат
-         */
-
         const resultData =
           result.snapshot.val() ||
           {};
 
 
         const myBooking =
-          Object.values(resultData)
-            .find(
+          Object.values(
+            resultData
+          ).find(
 
-              booking =>
+            booking =>
 
-                String(
-                  booking.telegramId
-                ) ===
+              String(
+                booking.telegramId
+              ) ===
 
-                String(
-                  telegramUser.id
-                )
+              String(
+                telegramUser.id
+              )
 
-            );
+          );
 
-
-        /*
-         * Показываем результат
-         */
 
         if (
           myBooking?.status ===
@@ -903,14 +1353,8 @@
         ) {
 
           tg.showAlert(
-
             "✅ Ты записан на тренировку!\n\n" +
-            getUsername() +
-            "\n\n" +
-            "💰 Стоимость: " +
-            TRAINING_PRICE +
-            " ₽"
-
+            getUsername()
           );
 
         }
@@ -918,14 +1362,11 @@
         else {
 
           tg.showAlert(
-
             "🟡 Все 12 мест заняты.\n\n" +
             "Ты добавлен в очередь."
-
           );
 
         }
-
 
       }
 
@@ -935,14 +1376,10 @@
 
 
         tg.showAlert(
-
-          "❌ Не удалось записаться.\n\n" +
-          "Попробуй ещё раз."
-
+          "❌ Не удалось записаться."
         );
 
       }
-
 
       finally {
 
@@ -956,11 +1393,12 @@
 
     /*
      * =================================
-     * ОТМЕНА ЗАПИСИ
+     * ОТМЕНА
      * =================================
      */
 
     async function cancelTraining() {
+
 
       if (!telegramUser) {
         return;
@@ -988,10 +1426,6 @@
               const data =
                 currentData;
 
-
-              /*
-               * Ищем запись пользователя
-               */
 
               const myKey =
                 Object.keys(data)
@@ -1028,17 +1462,12 @@
                 "booked";
 
 
-              /*
-               * Удаляем запись
-               */
-
               delete data[myKey];
 
 
               /*
-               * Если человек был
-               * на основном месте,
-               * берём первого из очереди
+               * Переводим первого
+               * из очереди
                */
 
               if (wasBooked) {
@@ -1106,10 +1535,12 @@
           );
 
 
-        if (!result.committed) {
+        if (
+          !result.committed
+        ) {
 
           tg.showAlert(
-            "Активная запись не найдена."
+            "Запись не найдена."
           );
 
           return;
@@ -1120,7 +1551,6 @@
         tg.showAlert(
           "✅ Запись отменена."
         );
-
 
       }
 
@@ -1135,7 +1565,6 @@
 
       }
 
-
       finally {
 
         joinButton.disabled =
@@ -1148,7 +1577,7 @@
 
     /*
      * =================================
-     * КНОПКА ЗАПИСИ / ОТМЕНЫ
+     * КНОПКА ЗАПИСИ
      * =================================
      */
 
@@ -1230,7 +1659,6 @@
 
           }
 
-
         }
 
         catch (error) {
@@ -1251,7 +1679,7 @@
 
     /*
      * =================================
-     * КАК ОПЛАТИТЬ
+     * КНОПКА ОПЛАТЫ
      * =================================
      */
 
