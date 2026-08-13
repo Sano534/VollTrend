@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>VollTrend</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -18,73 +19,895 @@
 
     h1 {
       text-align: center;
+      font-size: 32px;
+      margin: 10px 0 25px;
     }
 
     .training {
       background: var(--tg-theme-secondary-bg-color, #f2f2f2);
-      border-radius: 16px;
-      padding: 18px;
-      margin-top: 20px;
+      border-radius: 20px;
+      padding: 22px;
     }
 
-    .button {
+    .training h2 {
+      margin-top: 0;
+      font-size: 24px;
+    }
+
+    .info {
+      font-size: 17px;
+      line-height: 1.9;
+    }
+
+    .places {
+      margin-top: 15px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .queue {
+      margin-top: 8px;
+      font-size: 16px;
+      opacity: 0.75;
+    }
+
+    .status {
+      margin-top: 18px;
+      padding: 13px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    button {
       width: 100%;
-      padding: 14px;
+      padding: 16px;
       margin-top: 15px;
       border: none;
-      border-radius: 12px;
+      border-radius: 13px;
       background: var(--tg-theme-button-color, #2481cc);
       color: var(--tg-theme-button-text-color, #ffffff);
-      font-size: 16px;
+      font-size: 17px;
       font-weight: bold;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+    }
+
+    .payment {
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 13px;
+      background: rgba(36, 129, 204, 0.10);
+      font-size: 15px;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>🏐 VollTrend</h1>
+<h1>🏐 VollTrend</h1>
 
-  <div class="training">
+<div class="training">
 
-    <h2>Тренировка</h2>
+  <h2>Тренировка</h2>
 
-    <p>📅 30 августа</p>
-    <p>⏰ 20:00</p>
-    <p>📍 ГТС</p>
-
-    <p>👥 Мест: <b>12</b></p>
-
-    <button class="button" onclick="joinTraining()">
-      Записаться
-    </button>
-
+  <div class="info">
+    📅 30 августа 2026<br>
+    ⏰ 20:00<br>
+    📍 ГТС
   </div>
 
-  <script>
-    const tg = window.Telegram.WebApp;
+  <div class="places">
+    👥 Мест:
+    <span id="bookedCount">0</span>/12
+  </div>
 
-    tg.ready();
-    tg.expand();
+  <div class="queue">
+    🟡 В очереди:
+    <span id="queueCount">0</span>
+  </div>
 
-    function joinTraining() {
+  <div id="status" class="status">
+    Загрузка...
+  </div>
 
-      const user = tg.initDataUnsafe?.user;
+  <button id="joinButton">
+    Записаться
+  </button>
 
-      if (!user) {
-        alert("Открой приложение через Telegram");
+  <button id="paymentButton">
+    💳 Как оплатить
+  </button>
+
+  <div class="payment">
+    💳 <b>Оплата тренировки</b><br><br>
+
+    Оплата производится отдельно, вне Telegram.
+
+    <br><br>
+
+    После оплаты администратор самостоятельно
+    подтвердит оплату.
+  </div>
+
+</div>
+
+
+<script type="module">
+
+  /*
+   * =========================================
+   * FIREBASE
+   * =========================================
+   */
+
+  import {
+    initializeApp
+  } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+
+  import {
+    getDatabase,
+    ref,
+    onValue,
+    runTransaction
+  } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
+
+
+  const firebaseConfig = {
+
+    apiKey: "AIzaSyDDL0tfJRta6QCu0RXtJ_IPjkkV141tzpE",
+
+    authDomain:
+      "volltrend-33497.firebaseapp.com",
+
+    databaseURL:
+      "https://volltrend-33497-default-rtdb.europe-west1.firebasedatabase.app",
+
+    projectId:
+      "volltrend-33497",
+
+    storageBucket:
+      "volltrend-33497.firebasestorage.app",
+
+    messagingSenderId:
+      "516918940496",
+
+    appId:
+      "1:516918940496:web:1ba3b401fd3406aa459255"
+  };
+
+
+  const app = initializeApp(firebaseConfig);
+
+  const database = getDatabase(app);
+
+
+  /*
+   * =========================================
+   * TELEGRAM
+   * =========================================
+   */
+
+  const tg = window.Telegram.WebApp;
+
+  tg.ready();
+  tg.expand();
+
+
+  const telegramUser =
+    tg.initDataUnsafe?.user;
+
+
+  /*
+   * =========================================
+   * НАСТРОЙКИ ТРЕНИРОВКИ
+   * =========================================
+   */
+
+  const trainingId = "30-08-2026";
+
+  const MAX_PLACES = 12;
+
+  const bookingsRef =
+    ref(
+      database,
+      "trainings/" +
+      trainingId +
+      "/bookings"
+    );
+
+
+  /*
+   * =========================================
+   * ЭЛЕМЕНТЫ
+   * =========================================
+   */
+
+  const bookedCount =
+    document.getElementById("bookedCount");
+
+  const queueCount =
+    document.getElementById("queueCount");
+
+  const status =
+    document.getElementById("status");
+
+  const joinButton =
+    document.getElementById("joinButton");
+
+  const paymentButton =
+    document.getElementById("paymentButton");
+
+
+  /*
+   * =========================================
+   * ПРОВЕРКА TELEGRAM
+   * =========================================
+   */
+
+  if (!telegramUser) {
+
+    status.innerText =
+      "⚠️ Открой приложение через Telegram";
+
+    joinButton.disabled = true;
+  }
+
+
+  /*
+   * =========================================
+   * USERNAME
+   * =========================================
+   */
+
+  function getUsername() {
+
+    if (telegramUser?.username) {
+
+      return "@" + telegramUser.username;
+    }
+
+    return telegramUser?.first_name ||
+      "Пользователь";
+  }
+
+
+  /*
+   * =========================================
+   * ПОКАЗ ДАННЫХ
+   * =========================================
+   */
+
+  function updateInterface(data) {
+
+    data = data || {};
+
+
+    const bookings =
+      Object.entries(data)
+        .map(([key, value]) => ({
+          key,
+          ...value
+        }))
+        .filter(
+          booking =>
+            booking.status === "booked" ||
+            booking.status === "waitlist"
+        );
+
+
+    const booked =
+      bookings.filter(
+        booking =>
+          booking.status === "booked"
+      );
+
+
+    const queue =
+      bookings
+        .filter(
+          booking =>
+            booking.status === "waitlist"
+        )
+        .sort(
+          (a, b) =>
+            a.createdAt - b.createdAt
+        );
+
+
+    bookedCount.innerText =
+      booked.length;
+
+    queueCount.innerText =
+      queue.length;
+
+
+    /*
+     * Ищем текущего пользователя
+     */
+
+    let myBooking = null;
+
+    if (telegramUser) {
+
+      myBooking =
+        bookings.find(
+          booking =>
+            String(booking.telegramId) ===
+            String(telegramUser.id)
+        );
+    }
+
+
+    /*
+     * Пользователь уже записан
+     */
+
+    if (myBooking) {
+
+      joinButton.disabled = false;
+
+      if (
+        myBooking.status === "booked"
+      ) {
+
+        status.innerText =
+          "✅ Ты записан на тренировку";
+
+        joinButton.innerText =
+          "❌ Отменить запись";
+
+      }
+
+
+      if (
+        myBooking.status === "waitlist"
+      ) {
+
+        const position =
+          queue.findIndex(
+            booking =>
+              String(booking.telegramId) ===
+              String(telegramUser.id)
+          ) + 1;
+
+
+        status.innerText =
+          "🟡 Ты в очереди №" +
+          position;
+
+        joinButton.innerText =
+          "❌ Выйти из очереди";
+      }
+
+      return;
+    }
+
+
+    /*
+     * Пользователь ещё не записан
+     */
+
+    if (
+      booked.length < MAX_PLACES
+    ) {
+
+      status.innerText =
+        "🟢 Есть свободные места";
+
+      joinButton.innerText =
+        "Записаться";
+
+    } else {
+
+      status.innerText =
+        "🔴 Все 12 мест заняты";
+
+      joinButton.innerText =
+        "🟡 Встать в очередь";
+    }
+
+
+    joinButton.disabled = false;
+  }
+
+
+  /*
+   * =========================================
+   * REALTIME ОБНОВЛЕНИЕ
+   * =========================================
+   */
+
+  onValue(
+    bookingsRef,
+    snapshot => {
+
+      updateInterface(
+        snapshot.val()
+      );
+
+    },
+
+    error => {
+
+      console.error(error);
+
+      status.innerText =
+        "❌ Ошибка подключения к базе";
+
+    }
+  );
+
+
+  /*
+   * =========================================
+   * ЗАПИСЬ / ОЧЕРЕДЬ
+   * =========================================
+   */
+
+  async function joinTraining() {
+
+    if (!telegramUser) {
+
+      tg.showAlert(
+        "Открой приложение через Telegram"
+      );
+
+      return;
+    }
+
+
+    const username =
+      getUsername();
+
+
+    joinButton.disabled = true;
+
+
+    try {
+
+      const result =
+        await runTransaction(
+          bookingsRef,
+
+          currentData => {
+
+            const data =
+              currentData || {};
+
+
+            /*
+             * Проверяем,
+             * нет ли уже записи
+             */
+
+            const alreadyExists =
+              Object.values(data)
+                .some(
+                  booking =>
+                    String(
+                      booking.telegramId
+                    ) ===
+                    String(
+                      telegramUser.id
+                    ) &&
+                    (
+                      booking.status ===
+                      "booked" ||
+
+                      booking.status ===
+                      "waitlist"
+                    )
+                );
+
+
+            if (alreadyExists) {
+
+              return;
+            }
+
+
+            /*
+             * Считаем основные места
+             */
+
+            const booked =
+              Object.values(data)
+                .filter(
+                  booking =>
+                    booking.status ===
+                    "booked"
+                );
+
+
+            const statusValue =
+              booked.length < MAX_PLACES
+                ? "booked"
+                : "waitlist";
+
+
+            /*
+             * Ключ пользователя
+             *
+             * ID используется только
+             * внутри базы для уникальности.
+             * Пользователь видит username.
+             */
+
+            const userKey =
+              "user_" +
+              telegramUser.id;
+
+
+            data[userKey] = {
+
+              telegramId:
+                telegramUser.id,
+
+              username:
+                username,
+
+              firstName:
+                telegramUser.first_name || "",
+
+              status:
+                statusValue,
+
+              paid:
+                false,
+
+              createdAt:
+                Date.now()
+            };
+
+
+            return data;
+          }
+        );
+
+
+      /*
+       * Если transaction не изменила данные,
+       * значит пользователь уже записан.
+       */
+
+      if (!result.committed) {
+
+        tg.showAlert(
+          "Ты уже записан на эту тренировку."
+        );
+
         return;
       }
 
-      const username = user.username
-        ? "@" + user.username
-        : user.first_name;
+
+      tg.HapticFeedback
+        ?.notificationOccurred(
+          "success"
+        );
+
+
+      /*
+       * После записи читаем результат
+       */
+
+      const snapshot =
+        result.snapshot.val() || {};
+
+
+      const myBooking =
+        Object.values(snapshot)
+          .find(
+            booking =>
+              String(
+                booking.telegramId
+              ) ===
+              String(
+                telegramUser.id
+              )
+          );
+
+
+      if (
+        myBooking?.status ===
+        "booked"
+      ) {
+
+        tg.showAlert(
+          "✅ Ты записан!\n\n" +
+          username
+        );
+
+      } else {
+
+        tg.showAlert(
+          "🟡 Все 12 мест заняты.\n\n" +
+          "Ты добавлен в очередь."
+        );
+      }
+
+
+    } catch (error) {
+
+      console.error(error);
 
       tg.showAlert(
-        "Ты записан на тренировку, " + username
+        "❌ Не удалось записаться.\n\n" +
+        "Попробуй ещё раз."
       );
+
+    } finally {
+
+      joinButton.disabled = false;
     }
-  </script>
+  }
+
+
+  /*
+   * =========================================
+   * ОТМЕНА ЗАПИСИ
+   * =========================================
+   */
+
+  async function cancelTraining() {
+
+    if (!telegramUser) {
+      return;
+    }
+
+
+    joinButton.disabled = true;
+
+
+    try {
+
+      const result =
+        await runTransaction(
+          bookingsRef,
+
+          currentData => {
+
+            if (!currentData) {
+              return;
+            }
+
+
+            const data =
+              currentData;
+
+
+            /*
+             * Ищем пользователя
+             */
+
+            const myKey =
+              Object.keys(data)
+                .find(
+                  key =>
+                    String(
+                      data[key].telegramId
+                    ) ===
+                    String(
+                      telegramUser.id
+                    ) &&
+
+                    (
+                      data[key].status ===
+                      "booked" ||
+
+                      data[key].status ===
+                      "waitlist"
+                    )
+                );
+
+
+            if (!myKey) {
+              return;
+            }
+
+
+            const wasBooked =
+              data[myKey].status ===
+              "booked";
+
+
+            /*
+             * Удаляем запись
+             */
+
+            delete data[myKey];
+
+
+            /*
+             * Если освободилось
+             * основное место,
+             * переводим первого
+             * из очереди.
+             */
+
+            if (wasBooked) {
+
+              const bookedCount =
+                Object.values(data)
+                  .filter(
+                    booking =>
+                      booking.status ===
+                      "booked"
+                  )
+                  .length;
+
+
+              if (
+                bookedCount <
+                MAX_PLACES
+              ) {
+
+                const queue =
+                  Object.entries(data)
+                    .filter(
+                      ([key, booking]) =>
+                        booking.status ===
+                        "waitlist"
+                    )
+                    .sort(
+                      (a, b) =>
+                        a[1].createdAt -
+                        b[1].createdAt
+                    );
+
+
+                if (queue.length > 0) {
+
+                  const nextKey =
+                    queue[0][0];
+
+
+                  data[nextKey].status =
+                    "booked";
+                }
+              }
+            }
+
+
+            return data;
+          }
+        );
+
+
+      if (!result.committed) {
+
+        tg.showAlert(
+          "Активная запись не найдена."
+        );
+
+        return;
+      }
+
+
+      tg.HapticFeedback
+        ?.notificationOccurred(
+          "success"
+        );
+
+
+      tg.showAlert(
+        "✅ Запись отменена."
+      );
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      tg.showAlert(
+        "❌ Не удалось отменить запись."
+      );
+
+    } finally {
+
+      joinButton.disabled = false;
+    }
+  }
+
+
+  /*
+   * =========================================
+   * КНОПКА
+   * =========================================
+   */
+
+  joinButton.addEventListener(
+    "click",
+    async () => {
+
+      /*
+       * Если пользователь уже записан,
+       * кнопка отменяет запись.
+       */
+
+      if (!telegramUser) {
+        return;
+      }
+
+
+      const snapshot =
+        await new Promise(
+          resolve => {
+
+            onValue(
+              bookingsRef,
+              snap => resolve(snap),
+              {
+                onlyOnce: true
+              }
+            );
+
+          }
+        );
+
+
+      const data =
+        snapshot.val() || {};
+
+
+      const myBooking =
+        Object.values(data)
+          .find(
+            booking =>
+              String(
+                booking.telegramId
+              ) ===
+              String(
+                telegramUser.id
+              ) &&
+
+              (
+                booking.status ===
+                "booked" ||
+
+                booking.status ===
+                "waitlist"
+              )
+          );
+
+
+      if (myBooking) {
+
+        await cancelTraining();
+
+      } else {
+
+        await joinTraining();
+      }
+
+    }
+  );
+
+
+  /*
+   * =========================================
+   * КАК ОПЛАТИТЬ
+   * =========================================
+   */
+
+  paymentButton.addEventListener(
+    "click",
+    () => {
+
+      tg.showAlert(
+        "💳 Оплата тренировки\n\n" +
+        "Оплата производится отдельно, " +
+        "вне Telegram.\n\n" +
+        "После оплаты администратор " +
+        "подтвердит её."
+      );
+
+    }
+  );
+
+</script>
 
 </body>
 </html>
