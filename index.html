@@ -2,89 +2,433 @@
 <html lang="ru">
 
 <head>
+
   <meta charset="UTF-8">
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+
+  <meta
+    name="theme-color"
+    content="#ffffff"
   >
 
   <title>VollTrend</title>
 
+
+  <!-- Telegram Mini App -->
+
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+
+  <!-- Firebase -->
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
 
   <style>
 
+    /* =========================================
+       ОСНОВНЫЕ НАСТРОЙКИ
+       ========================================= */
+
     * {
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
+
+
+    html {
+      width: 100%;
+      min-height: 100%;
+    }
+
 
     body {
+
       margin: 0;
-      padding: 20px;
-      font-family: Arial, sans-serif;
+
+      padding:
+        16px
+        16px
+        30px;
+
+      min-height: 100vh;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
 
       background:
-        var(--tg-theme-bg-color, #ffffff);
+        var(
+          --tg-theme-bg-color,
+          #ffffff
+        );
 
       color:
-        var(--tg-theme-text-color, #000000);
+        var(
+          --tg-theme-text-color,
+          #111111
+        );
+
     }
 
-    h1 {
+
+    button,
+    a {
+
+      -webkit-tap-highlight-color:
+        transparent;
+
+    }
+
+
+    button {
+
+      font-family:
+        inherit;
+
+    }
+
+
+    /* =========================================
+       ШАПКА
+       ========================================= */
+
+    .header {
+
       text-align: center;
-      font-size: 32px;
-      margin: 10px 0 25px;
+
+      margin:
+        10px
+        0
+        22px;
+
     }
 
-    h2 {
-      margin-top: 0;
-      font-size: 23px;
+
+    .logo {
+
+      width: 72px;
+      height: 72px;
+
+      margin:
+        0
+        auto
+        10px;
+
+      border-radius: 22px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      font-size: 40px;
+
+      background:
+        var(
+          --tg-theme-button-color,
+          #2481cc
+        );
+
+      box-shadow:
+        0 8px 25px
+        rgba(0, 0, 0, 0.12);
+
     }
 
-    .training {
+
+    .header-title {
+
+      margin: 0;
+
+      font-size: 30px;
+
+      font-weight: 800;
+
+      letter-spacing:
+        -0.5px;
+
+    }
+
+
+    .header-subtitle {
+
+      margin:
+        6px
+        0
+        0;
+
+      opacity: 0.65;
+
+      font-size: 15px;
+
+    }
+
+
+    /* =========================================
+       КАРТОЧКА
+       ========================================= */
+
+    .card {
+
+      width: 100%;
+
+      margin-bottom: 16px;
+
+      padding: 20px;
+
+      border-radius: 22px;
+
       background:
         var(
           --tg-theme-secondary-bg-color,
-          #f2f2f2
+          #f3f3f3
         );
 
-      border-radius: 20px;
-      padding: 22px;
     }
 
-    .info {
+
+    /* =========================================
+       ИНФОРМАЦИЯ О ТРЕНИРОВКЕ
+       ========================================= */
+
+    .training-title {
+
+      margin:
+        0
+        0
+        18px;
+
+      font-size: 24px;
+
+      font-weight: 800;
+
+    }
+
+
+    .info-row {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      padding:
+        7px
+        0;
+
       font-size: 17px;
-      line-height: 1.9;
+
+      line-height: 1.4;
+
     }
 
-    .places {
-      margin-top: 15px;
-      font-size: 20px;
-      font-weight: bold;
-    }
 
-    .queue {
-      margin-top: 8px;
-      font-size: 16px;
-      opacity: 0.75;
-    }
+    .info-icon {
 
-    .status {
-      margin-top: 18px;
-      padding: 14px;
-      border-radius: 13px;
+      width: 25px;
+
       text-align: center;
-      font-size: 16px;
+
+      flex-shrink: 0;
+
     }
 
-    button {
-      width: 100%;
-      padding: 15px;
-      margin-top: 15px;
 
-      border: none;
-      border-radius: 13px;
+    .price-row {
+
+      margin-top: 10px;
+
+      padding-top: 13px;
+
+      border-top:
+        1px solid
+        rgba(127, 127, 127, 0.2);
+
+      font-size: 19px;
+
+      font-weight: 700;
+
+    }
+
+
+    .price {
+
+      font-weight: 800;
+
+    }
+
+
+    /* =========================================
+       СТАТУС
+       ========================================= */
+
+    .status-box {
+
+      margin-top: 18px;
+
+      padding: 13px 15px;
+
+      border-radius: 14px;
+
+      text-align: center;
+
+      font-size: 16px;
+
+      font-weight: 600;
+
+      background:
+        rgba(36, 129, 204, 0.10);
+
+    }
+
+
+    .status-success {
+
+      background:
+        rgba(40, 167, 69, 0.12);
+
+    }
+
+
+    .status-warning {
+
+      background:
+        rgba(255, 193, 7, 0.16);
+
+    }
+
+
+    .status-error {
+
+      background:
+        rgba(220, 53, 69, 0.12);
+
+    }
+
+
+    /* =========================================
+       СЧЁТЧИК МЕСТ
+       ========================================= */
+
+    .places-wrapper {
+
+      margin-top: 18px;
+
+    }
+
+
+    .places-title {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      margin-bottom: 9px;
+
+      font-size: 16px;
+
+      font-weight: 700;
+
+    }
+
+
+    .places-number {
+
+      font-size: 17px;
+
+    }
+
+
+    .progress {
+
+      width: 100%;
+
+      height: 9px;
+
+      overflow: hidden;
+
+      border-radius: 20px;
+
+      background:
+        rgba(127, 127, 127, 0.18);
+
+    }
+
+
+    .progress-bar {
+
+      height: 100%;
+
+      width: 0%;
+
+      border-radius: 20px;
+
+      transition:
+        width 0.3s ease;
+
+      background:
+        var(
+          --tg-theme-button-color,
+          #2481cc
+        );
+
+    }
+
+
+    .queue-counter {
+
+      margin-top: 10px;
+
+      font-size: 14px;
+
+      opacity: 0.65;
+
+    }
+
+
+    /* =========================================
+       КНОПКИ
+       ========================================= */
+
+    .button {
+
+      width: 100%;
+
+      min-height: 52px;
+
+      margin-top: 13px;
+
+      padding:
+        14px
+        18px;
+
+      border: 0;
+
+      border-radius: 15px;
+
+      font-size: 17px;
+
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition:
+        transform 0.1s ease,
+        opacity 0.2s ease;
 
       background:
         var(
@@ -98,99 +442,546 @@
           #ffffff
         );
 
-      font-size: 16px;
-      font-weight: bold;
     }
 
-    button:disabled {
+
+    .button:active {
+
+      transform:
+        scale(0.98);
+
+    }
+
+
+    .button:disabled {
+
       opacity: 0.5;
+
+      cursor: default;
+
     }
 
-    .payment {
-      display: none;
 
-      margin-top: 15px;
-      padding: 16px;
-
-      border-radius: 13px;
+    .button-danger {
 
       background:
-        rgba(36, 129, 204, 0.10);
+        #e53935;
 
-      font-size: 16px;
-      line-height: 1.6;
+      color: #ffffff;
+
     }
 
-    .admin {
-      display: none;
 
-      margin-top: 25px;
-      padding: 18px;
-
-      border-radius: 18px;
+    .button-secondary {
 
       background:
+        rgba(127, 127, 127, 0.14);
+
+      color:
         var(
-          --tg-theme-secondary-bg-color,
-          #f2f2f2
+          --tg-theme-text-color,
+          #111111
         );
+
     }
 
-    .admin-title {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 15px;
+
+    .button-admin {
+
+      background:
+        #222222;
+
+      color:
+        #ffffff;
+
     }
+
+
+    /* =========================================
+       ОПЛАТА
+       ========================================= */
+
+    .payment-info {
+
+      display: none;
+
+      margin-top: 13px;
+
+      padding: 17px;
+
+      border-radius: 16px;
+
+      background:
+        rgba(255, 193, 7, 0.14);
+
+      line-height: 1.55;
+
+      font-size: 15px;
+
+    }
+
+
+    .payment-info.open {
+
+      display: block;
+
+    }
+
+
+    .payment-title {
+
+      font-size: 19px;
+
+      font-weight: 800;
+
+      margin-bottom: 10px;
+
+    }
+
+
+    .admin-link {
+
+      display: inline-block;
+
+      margin-top: 6px;
+
+      padding:
+        8px
+        12px;
+
+      border-radius: 10px;
+
+      text-decoration: none;
+
+      background:
+        rgba(36, 129, 204, 0.12);
+
+      color:
+        var(
+          --tg-theme-link-color,
+          #2481cc
+        );
+
+      font-weight: 800;
+
+    }
+
+
+    /* =========================================
+       СТАТУС ОПЛАТЫ
+       ========================================= */
+
+    .payment-status {
+
+      margin-top: 13px;
+
+      padding: 13px;
+
+      border-radius: 14px;
+
+      text-align: center;
+
+      font-size: 15px;
+
+      font-weight: 700;
+
+    }
+
+
+    .payment-not-paid {
+
+      background:
+        rgba(255, 193, 7, 0.14);
+
+    }
+
+
+    .payment-paid {
+
+      background:
+        rgba(40, 167, 69, 0.14);
+
+      color:
+        #16803c;
+
+    }
+
+
+    /* =========================================
+       ЗАГОЛОВКИ СПИСКОВ
+       ========================================= */
+
+    .section-header {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      margin-bottom: 15px;
+
+    }
+
 
     .section-title {
-      font-size: 18px;
-      font-weight: bold;
-      margin-top: 18px;
-      margin-bottom: 10px;
+
+      margin: 0;
+
+      font-size: 21px;
+
+      font-weight: 800;
+
     }
 
-    .user-card {
-      padding: 14px;
-      margin-top: 10px;
 
-      border-radius: 13px;
+    .section-count {
+
+      font-size: 14px;
+
+      opacity: 0.6;
+
+    }
+
+
+    /* =========================================
+       СПИСОК ПОЛЬЗОВАТЕЛЕЙ
+       ========================================= */
+
+    .users-list {
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 9px;
+
+    }
+
+
+    .user-item {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 12px;
+
+      padding:
+        12px
+        13px;
+
+      border-radius: 14px;
 
       background:
         var(
           --tg-theme-bg-color,
           #ffffff
         );
+
     }
+
+
+    .user-number {
+
+      width: 28px;
+      height: 28px;
+
+      flex-shrink: 0;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      font-size: 13px;
+
+      font-weight: 800;
+
+      background:
+        rgba(36, 129, 204, 0.12);
+
+    }
+
 
     .user-name {
-      font-size: 17px;
-      font-weight: bold;
+
+      min-width: 0;
+
+      overflow: hidden;
+
+      text-overflow: ellipsis;
+
+      white-space: nowrap;
+
+      font-size: 16px;
+
+      font-weight: 650;
+
     }
 
-    .user-status {
-      margin-top: 6px;
-      font-size: 15px;
-    }
-
-    .paid {
-      color: #16803c;
-      font-weight: bold;
-    }
-
-    .not-paid {
-      color: #c62828;
-      font-weight: bold;
-    }
-
-    .admin-button {
-      margin-top: 10px;
-      padding: 11px;
-      font-size: 14px;
-    }
 
     .empty {
+
+      padding:
+        14px
+        5px;
+
+      text-align: center;
+
+      opacity: 0.55;
+
+      font-size: 15px;
+
+    }
+
+
+    /* =========================================
+       ОЧЕРЕДЬ
+       ========================================= */
+
+    .queue-item {
+
+      background:
+        rgba(255, 193, 7, 0.10);
+
+    }
+
+
+    .queue-number {
+
+      background:
+        rgba(255, 193, 7, 0.22);
+
+    }
+
+
+    /* =========================================
+       МОЯ ЗАПИСЬ
+       ========================================= */
+
+    .my-booking {
+
+      display: none;
+
+    }
+
+
+    .my-booking.visible {
+
+      display: block;
+
+    }
+
+
+    .my-booking-title {
+
+      font-size: 18px;
+
+      font-weight: 800;
+
+      margin-bottom: 8px;
+
+    }
+
+
+    .my-booking-text {
+
+      font-size: 15px;
+
+      line-height: 1.5;
+
+      opacity: 0.75;
+
+    }
+
+
+    /* =========================================
+       АДМИН-ПАНЕЛЬ
+       ========================================= */
+
+    .admin-panel {
+
+      display: none;
+
+      border:
+        2px solid
+        rgba(0, 0, 0, 0.12);
+
+    }
+
+
+    .admin-panel.visible {
+
+      display: block;
+
+    }
+
+
+    .admin-badge {
+
+      display: inline-block;
+
+      padding:
+        6px
+        10px;
+
+      border-radius: 9px;
+
+      font-size: 12px;
+
+      font-weight: 800;
+
+      background:
+        #222222;
+
+      color:
+        #ffffff;
+
+    }
+
+
+    .admin-user {
+
+      padding: 15px;
+
+      margin-bottom: 10px;
+
+      border-radius: 15px;
+
+      background:
+        var(
+          --tg-theme-bg-color,
+          #ffffff
+        );
+
+    }
+
+
+    .admin-user-top {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: flex-start;
+
+      gap: 10px;
+
+    }
+
+
+    .admin-user-name {
+
+      font-size: 17px;
+
+      font-weight: 800;
+
+      word-break: break-word;
+
+    }
+
+
+    .admin-user-place {
+
+      margin-top: 5px;
+
+      font-size: 13px;
+
       opacity: 0.6;
-      padding: 10px 0;
+
+    }
+
+
+    .admin-payment {
+
+      margin-top: 10px;
+
+      font-size: 14px;
+
+      font-weight: 700;
+
+    }
+
+
+    .admin-paid {
+
+      color:
+        #16803c;
+
+    }
+
+
+    .admin-unpaid {
+
+      color:
+        #d48a00;
+
+    }
+
+
+    .admin-small-button {
+
+      width: 100%;
+
+      min-height: 44px;
+
+      margin-top: 10px;
+
+      padding:
+        10px
+        12px;
+
+      border: 0;
+
+      border-radius: 12px;
+
+      font-size: 14px;
+
+      font-weight: 700;
+
+      cursor: pointer;
+
+      background:
+        #222222;
+
+      color:
+        #ffffff;
+
+    }
+
+
+    /* =========================================
+       ЗАГРУЗКА
+       ========================================= */
+
+    .loading {
+
+      text-align: center;
+
+      padding: 20px;
+
+      opacity: 0.6;
+
+    }
+
+
+    /* =========================================
+       FOOTER
+       ========================================= */
+
+    .footer {
+
+      text-align: center;
+
+      margin-top: 25px;
+
+      font-size: 12px;
+
+      opacity: 0.4;
+
     }
 
   </style>
@@ -200,207 +991,479 @@
 
 <body>
 
-  <h1>🏐 VollTrend</h1>
+
+  <!-- =========================================
+       HEADER
+       ========================================= -->
+
+  <header class="header">
+
+    <div class="logo">
+      🏐
+    </div>
+
+    <h1 class="header-title">
+      VollTrend
+    </h1>
+
+    <p class="header-subtitle">
+      Волейбольные тренировки
+    </p>
+
+  </header>
 
 
-  <!-- ================================= -->
-  <!-- ТРЕНИРОВКА -->
-  <!-- ================================= -->
+  <!-- =========================================
+       КАРТОЧКА ТРЕНИРОВКИ
+       ========================================= -->
 
-  <div class="training">
+  <section class="card">
 
-    <h2>
+
+    <h2 class="training-title">
       Волейбольная тренировка
     </h2>
 
 
-    <div class="info">
+    <div class="info-row">
 
-      📅 30 августа 2026
-      <br>
+      <span class="info-icon">
+        📅
+      </span>
 
-      ⏰ 20:00
-      <br>
+      <span>
+        <b>30 августа 2026</b>
+      </span>
 
-      📍 ГТС
-      <br>
+    </div>
+
+
+    <div class="info-row">
+
+      <span class="info-icon">
+        ⏰
+      </span>
+
+      <span>
+        <b>20:00</b>
+      </span>
+
+    </div>
+
+
+    <div class="info-row">
+
+      <span class="info-icon">
+        📍
+      </span>
+
+      <span>
+        <b>ГТС</b>
+      </span>
+
+    </div>
+
+
+    <div class="price-row">
 
       💰 Стоимость:
-      <b>400 ₽</b>
+      <span class="price">
+        400 ₽
+      </span>
 
     </div>
 
 
-    <div class="places">
+    <!-- =====================================
+         МЕСТА
+         ===================================== -->
 
-      👥 Мест:
+    <div class="places-wrapper">
 
-      <span id="bookedCount">
-        0
-      </span>/12
+
+      <div class="places-title">
+
+        <span>
+          👥 Места
+        </span>
+
+        <span
+          class="places-number"
+          id="placesCounter"
+        >
+          0/12
+        </span>
+
+      </div>
+
+
+      <div class="progress">
+
+        <div
+          class="progress-bar"
+          id="progressBar"
+        ></div>
+
+      </div>
+
+
+      <div
+        class="queue-counter"
+        id="queueCounter"
+      >
+        🟡 В очереди: 0
+      </div>
+
 
     </div>
 
 
-    <div class="queue">
+    <!-- =====================================
+         СТАТУС
+         ===================================== -->
 
-      🟡 В очереди:
+    <div
+      id="statusBox"
+      class="status-box"
+    >
 
-      <span id="queueCount">
-        0
+      Загрузка...
+
+    </div>
+
+
+    <!-- =====================================
+         КНОПКА ЗАПИСИ
+         ===================================== -->
+
+    <button
+      id="bookingButton"
+      class="button"
+    >
+
+      Записаться
+
+    </button>
+
+
+    <!-- =====================================
+         КНОПКА ОТМЕНЫ
+         ===================================== -->
+
+    <button
+      id="cancelButton"
+      class="button button-danger"
+      style="display:none;"
+    >
+
+      ❌ Отменить запись
+
+    </button>
+
+
+    <!-- =====================================
+         КАК ОПЛАТИТЬ
+         ===================================== -->
+
+    <button
+      id="paymentButton"
+      class="button button-secondary"
+    >
+
+      💳 Как оплатить
+
+    </button>
+
+
+    <div
+      id="paymentInfo"
+      class="payment-info"
+    >
+
+      <div class="payment-title">
+        💳 Как оплатить
+      </div>
+
+
+      <div>
+
+        1️⃣ Стоимость тренировки:
+        <b>400 ₽</b>
+
+      </div>
+
+
+      <br>
+
+
+      <div>
+
+        2️⃣ Напишите администратору:
+
+      </div>
+
+
+      <a
+        class="admin-link"
+        href="https://t.me/dimka_3948"
+        target="_blank"
+      >
+
+        @dimka_3948
+
+      </a>
+
+
+      <br><br>
+
+
+      <div>
+
+        3️⃣ Получите у администратора
+        реквизиты для оплаты.
+
+      </div>
+
+
+      <br>
+
+
+      <div>
+
+        4️⃣ Переведите
+        <b>400 ₽</b>.
+
+      </div>
+
+
+      <br>
+
+
+      <div>
+
+        5️⃣ Сообщите администратору,
+        что оплата произведена.
+
+      </div>
+
+
+      <br>
+
+
+      <div>
+
+        6️⃣ Дождитесь подтверждения
+        оплаты.
+
+      </div>
+
+
+    </div>
+
+
+    <!-- =====================================
+         МОЙ СТАТУС ОПЛАТЫ
+         ===================================== -->
+
+    <div
+      id="myPaymentStatus"
+      class="payment-status payment-not-paid"
+      style="display:none;"
+    >
+
+      💳 Оплата:
+      ❌ Не оплачено
+
+    </div>
+
+
+  </section>
+
+
+  <!-- =========================================
+       МОЯ ЗАПИСЬ
+       ========================================= -->
+
+  <section
+    id="myBookingCard"
+    class="card my-booking"
+  >
+
+    <div class="my-booking-title">
+
+      👤 Моя запись
+
+    </div>
+
+
+    <div
+      id="myBookingText"
+      class="my-booking-text"
+    >
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================
+       ПУБЛИЧНЫЙ СПИСОК
+       ========================================= -->
+
+  <section class="card">
+
+
+    <div class="section-header">
+
+      <h2 class="section-title">
+
+        👥 Записались
+
+      </h2>
+
+
+      <span
+        id="publicBookedCount"
+        class="section-count"
+      >
+
+        0/12
+
       </span>
 
     </div>
 
 
     <div
-      id="status"
-      class="status"
+      id="publicBookedList"
+      class="users-list"
     >
-      Загрузка...
+
+      <div class="loading">
+        Загрузка...
+      </div>
+
     </div>
 
 
-    <button
-      id="joinButton"
-    >
-      Записаться
-    </button>
+  </section>
 
 
-    <!-- ================================= -->
-    <!-- ОПЛАТА -->
-    <!-- ================================= -->
+  <!-- =========================================
+       ОЧЕРЕДЬ
+       ========================================= -->
 
-    <button
-      id="paymentButton"
-    >
-      💳 Как оплатить
-    </button>
+  <section class="card">
+
+
+    <div class="section-header">
+
+      <h2 class="section-title">
+
+        🟡 Очередь
+
+      </h2>
+
+
+      <span
+        id="publicQueueCount"
+        class="section-count"
+      >
+
+        0
+
+      </span>
+
+    </div>
 
 
     <div
-      id="paymentInfo"
-      class="payment"
+      id="publicQueueList"
+      class="users-list"
     >
 
-      <b>💳 Как оплатить</b>
+      <div class="empty">
 
-      <br><br>
+        Очередь пустая
 
-      1️⃣ Стоимость тренировки:
-      <b>400 ₽</b>
-
-      <br><br>
-
-      2️⃣ Напишите администратору:
-
-      <br>
-
-      <b>@dimka_3948</b>
-
-      <br><br>
-
-      3️⃣ Получите реквизиты
-      для оплаты.
-
-      <br><br>
-
-      4️⃣ Переведите
-      <b>400 ₽</b>.
-
-      <br><br>
-
-      5️⃣ Сообщите администратору
-      об оплате.
-
-      <br><br>
-
-      6️⃣ Дождитесь подтверждения
-      оплаты.
+      </div>
 
     </div>
 
 
-    <!-- ================================= -->
-    <!-- СТАТУС ОПЛАТЫ ПОЛЬЗОВАТЕЛЯ -->
-    <!-- ================================= -->
-
-    <div
-      id="myPaymentStatus"
-      class="status"
-    >
-      💳 Оплата: —
-    </div>
-
-  </div>
+  </section>
 
 
-  <!-- ================================= -->
-  <!-- АДМИН-ПАНЕЛЬ -->
-  <!-- ================================= -->
+  <!-- =========================================
+       АДМИН-ПАНЕЛЬ
+       ========================================= -->
 
-  <div
+  <section
     id="adminPanel"
-    class="admin"
+    class="card admin-panel"
   >
 
-    <div class="admin-title">
-      👨‍💼 Админ-панель
+
+    <div class="section-header">
+
+      <h2 class="section-title">
+
+        👨‍💼 Админ-панель
+
+      </h2>
+
+
+      <span class="admin-badge">
+
+        ADMIN
+
+      </span>
+
     </div>
 
 
-    <div>
-      💰 Стоимость:
-      <b>400 ₽</b>
+    <div
+      id="adminSummary"
+      class="my-booking-text"
+      style="margin-bottom:15px;"
+    >
+
     </div>
 
 
-    <div class="section-title">
-      🟢 Основные места
+    <div
+      id="adminUsersList"
+    >
+
+      <div class="empty">
+
+        Загрузка...
+
+      </div>
+
     </div>
 
 
-    <div id="bookedList"></div>
+  </section>
 
 
-    <div class="section-title">
-      🟡 Очередь
-    </div>
+  <div class="footer">
 
-
-    <div id="queueList"></div>
+    VollTrend
 
   </div>
 
 
-  <!-- ================================= -->
-  <!-- JAVASCRIPT -->
-  <!-- ================================= -->
+  <!-- =========================================
+       JAVASCRIPT
+       ========================================= -->
 
-  <script type="module">
-
-
-    /*
-     * =================================
-     * FIREBASE
-     * =================================
-     */
-
-    import {
-      initializeApp
-    } from
-      "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+  <script>
 
 
-    import {
-      getDatabase,
-      ref,
-      onValue,
-      runTransaction
-    } from
-      "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
-
+    /* =========================================
+       FIREBASE CONFIG
+       ========================================= */
 
     const firebaseConfig = {
 
@@ -428,42 +1491,50 @@
     };
 
 
-    const app =
-      initializeApp(firebaseConfig);
+    /* =========================================
+       ИНИЦИАЛИЗАЦИЯ FIREBASE
+       ========================================= */
+
+    firebase.initializeApp(
+      firebaseConfig
+    );
 
 
     const database =
-      getDatabase(app);
+      firebase.database();
 
 
-    /*
-     * =================================
-     * TELEGRAM
-     * =================================
-     */
+    /* =========================================
+       TELEGRAM
+       ========================================= */
 
-    const tg =
-      window.Telegram.WebApp;
+    const telegram =
+      window.Telegram &&
+      window.Telegram.WebApp
+        ? window.Telegram.WebApp
+        : null;
 
 
-    tg.ready();
+    if (telegram) {
 
-    tg.expand();
+      telegram.ready();
+
+      telegram.expand();
+
+    }
 
 
     const telegramUser =
-      tg.initDataUnsafe?.user;
+      telegram &&
+      telegram.initDataUnsafe &&
+      telegram.initDataUnsafe.user
+        ? telegram.initDataUnsafe.user
+        : null;
 
 
-    /*
-     * =================================
-     * НАСТРОЙКИ
-     * =================================
-     */
-
-    const TRAINING_ID =
-      "30-08-2026";
-
+    /* =========================================
+       НАСТРОЙКИ
+       ========================================= */
 
     const MAX_PLACES =
       12;
@@ -477,42 +1548,45 @@
       "5862653284";
 
 
+    const ADMIN_USERNAME =
+      "@dimka_3948";
+
+
+    const TRAINING_ID =
+      "30-08-2026";
+
+
+    const TRAINING_PATH =
+      "trainings/" +
+      TRAINING_ID +
+      "/bookings";
+
+
     const bookingsRef =
-      ref(
-        database,
-        "trainings/" +
-        TRAINING_ID +
-        "/bookings"
+      database.ref(
+        TRAINING_PATH
       );
 
 
-    /*
-     * =================================
-     * ЭЛЕМЕНТЫ
-     * =================================
-     */
+    /* =========================================
+       ELEMENTS
+       ========================================= */
 
-    const bookedCount =
+    const statusBox =
       document.getElementById(
-        "bookedCount"
+        "statusBox"
       );
 
 
-    const queueCount =
+    const bookingButton =
       document.getElementById(
-        "queueCount"
+        "bookingButton"
       );
 
 
-    const status =
+    const cancelButton =
       document.getElementById(
-        "status"
-      );
-
-
-    const joinButton =
-      document.getElementById(
-        "joinButton"
+        "cancelButton"
       );
 
 
@@ -528,6 +1602,60 @@
       );
 
 
+    const placesCounter =
+      document.getElementById(
+        "placesCounter"
+      );
+
+
+    const progressBar =
+      document.getElementById(
+        "progressBar"
+      );
+
+
+    const queueCounter =
+      document.getElementById(
+        "queueCounter"
+      );
+
+
+    const publicBookedCount =
+      document.getElementById(
+        "publicBookedCount"
+      );
+
+
+    const publicQueueCount =
+      document.getElementById(
+        "publicQueueCount"
+      );
+
+
+    const publicBookedList =
+      document.getElementById(
+        "publicBookedList"
+      );
+
+
+    const publicQueueList =
+      document.getElementById(
+        "publicQueueList"
+      );
+
+
+    const myBookingCard =
+      document.getElementById(
+        "myBookingCard"
+      );
+
+
+    const myBookingText =
+      document.getElementById(
+        "myBookingText"
+      );
+
+
     const myPaymentStatus =
       document.getElementById(
         "myPaymentStatus"
@@ -540,427 +1668,468 @@
       );
 
 
-    const bookedList =
+    const adminSummary =
       document.getElementById(
-        "bookedList"
+        "adminSummary"
       );
 
 
-    const queueList =
+    const adminUsersList =
       document.getElementById(
-        "queueList"
+        "adminUsersList"
       );
 
 
-    /*
-     * =================================
-     * USERNAME
-     * =================================
-     */
+    /* =========================================
+       CURRENT USER
+       ========================================= */
 
-    function getUsername() {
+    let currentUser = null;
 
-      if (
-        telegramUser &&
-        telegramUser.username
-      ) {
 
-        return (
-          "@" +
+    if (telegramUser) {
+
+      currentUser = {
+
+        id:
+          String(
+            telegramUser.id
+          ),
+
+        username:
           telegramUser.username
-        );
+            ? "@" +
+              telegramUser.username
+            : null,
 
-      }
+        firstName:
+          telegramUser.first_name ||
+          "",
 
+        lastName:
+          telegramUser.last_name ||
+          ""
 
-      return (
-        telegramUser?.first_name ||
-        "Пользователь"
-      );
+      };
 
     }
 
 
-    /*
-     * =================================
-     * АДМИН
-     * =================================
-     */
+    /* =========================================
+       ПРОВЕРКА АДМИНА
+       ========================================= */
 
     const isAdmin =
-      telegramUser &&
-      String(
-        telegramUser.id
-      ) === ADMIN_ID;
+      currentUser &&
+      currentUser.id ===
+      ADMIN_ID;
 
 
     if (isAdmin) {
 
-      adminPanel.style.display =
-        "block";
+      adminPanel.classList.add(
+        "visible"
+      );
 
     }
 
 
-    /*
-     * =================================
-     * ОБНОВЛЕНИЕ
-     * =================================
-     */
+    /* =========================================
+       USERNAME
+       ========================================= */
 
-    function updateInterface(data) {
+    function getCurrentUsername() {
 
-      data =
-        data || {};
+      if (
+        currentUser &&
+        currentUser.username
+      ) {
 
-
-      const bookings =
-        Object.entries(data)
-          .map(
-            ([key, value]) => ({
-              key,
-              ...value
-            })
-          )
-          .filter(
-
-            booking =>
-
-              booking.status ===
-                "booked" ||
-
-              booking.status ===
-                "waitlist"
-
-          );
-
-
-      const booked =
-        bookings.filter(
-
-          booking =>
-
-            booking.status ===
-            "booked"
-
-        );
-
-
-      const queue =
-        bookings
-          .filter(
-
-            booking =>
-
-              booking.status ===
-              "waitlist"
-
-          )
-          .sort(
-
-            (a, b) =>
-
-              a.createdAt -
-              b.createdAt
-
-          );
-
-
-      bookedCount.innerText =
-        booked.length;
-
-
-      queueCount.innerText =
-        queue.length;
-
-
-      /*
-       * =================================
-       * МОЯ ЗАПИСЬ
-       * =================================
-       */
-
-      let myBooking =
-        null;
-
-
-      if (telegramUser) {
-
-        myBooking =
-          bookings.find(
-
-            booking =>
-
-              String(
-                booking.telegramId
-              ) ===
-
-              String(
-                telegramUser.id
-              )
-
-          );
+        return currentUser.username;
 
       }
 
 
-      if (myBooking) {
+      if (
+        currentUser &&
+        currentUser.firstName
+      ) {
 
-        if (
-          myBooking.status ===
-          "booked"
-        ) {
+        return currentUser.firstName;
 
-          status.innerText =
-            "✅ Ты записан на тренировку";
-
-
-          joinButton.innerText =
-            "❌ Отменить запись";
-
-        }
+      }
 
 
-        if (
-          myBooking.status ===
-          "waitlist"
-        ) {
+      return "Пользователь";
 
-          const position =
-            queue.findIndex(
-
-              booking =>
-
-                String(
-                  booking.telegramId
-                ) ===
-
-                String(
-                  telegramUser.id
-                )
-
-            ) + 1;
+    }
 
 
-          status.innerText =
-            "🟡 Ты в очереди №" +
-            position;
+    /* =========================================
+       TELEGRAM ALERT
+       ========================================= */
 
+    function showMessage(
+      message
+    ) {
 
-          joinButton.innerText =
-            "❌ Выйти из очереди";
+      if (
+        telegram &&
+        typeof telegram.showAlert ===
+        "function"
+      ) {
 
-        }
-
-
-        /*
-         * Статус оплаты
-         */
-
-        if (
-          myBooking.paid === true
-        ) {
-
-          myPaymentStatus.innerText =
-            "💳 Оплата: ✅ Оплачено";
-
-
-          myPaymentStatus.className =
-            "status paid";
-
-        }
-
-        else {
-
-          myPaymentStatus.innerText =
-            "💳 Оплата: ❌ Не оплачено";
-
-
-          myPaymentStatus.className =
-            "status not-paid";
-
-        }
+        telegram.showAlert(
+          message
+        );
 
       }
 
       else {
 
-        status.innerText =
-          booked.length < MAX_PLACES
-
-            ? "🟢 Есть свободные места"
-
-            : "🔴 Все 12 мест заняты";
-
-
-        joinButton.innerText =
-          booked.length < MAX_PLACES
-
-            ? "Записаться"
-
-            : "🟡 Встать в очередь";
-
-
-        myPaymentStatus.innerText =
-          "💳 Оплата: —";
-
-
-        myPaymentStatus.className =
-          "status";
-
-      }
-
-
-      /*
-       * =================================
-       * АДМИНСКИЙ СПИСОК
-       * =================================
-       */
-
-      if (isAdmin) {
-
-        renderAdminList(
-          booked,
-          queue
-        );
+        alert(message);
 
       }
 
     }
 
 
-    /*
-     * =================================
-     * АДМИНСКИЙ СПИСОК
-     * =================================
-     */
+    /* =========================================
+       HAPTIC
+       ========================================= */
 
-    function renderAdminList(
+    function haptic(
+      type = "success"
+    ) {
+
+      if (
+        telegram &&
+        telegram.HapticFeedback
+      ) {
+
+        telegram.HapticFeedback
+          .notificationOccurred(
+            type
+          );
+
+      }
+
+    }
+
+
+    /* =========================================
+       ESCAPE HTML
+       ========================================= */
+
+    function escapeHtml(
+      value
+    ) {
+
+      if (
+        value === null ||
+        value === undefined
+      ) {
+
+        return "";
+
+      }
+
+
+      return String(value)
+
+        .replaceAll(
+          "&",
+          "&amp;"
+        )
+
+        .replaceAll(
+          "<",
+          "&lt;"
+        )
+
+        .replaceAll(
+          ">",
+          "&gt;"
+        )
+
+        .replaceAll(
+          '"',
+          "&quot;"
+        )
+
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
+
+    }
+
+
+    /* =========================================
+       Получение имени
+       ========================================= */
+
+    function getDisplayName(
+      booking
+    ) {
+
+      if (
+        booking &&
+        booking.username
+      ) {
+
+        return booking.username;
+
+      }
+
+
+      if (
+        booking &&
+        booking.firstName
+      ) {
+
+        return booking.firstName;
+
+      }
+
+
+      return "Пользователь";
+
+    }
+
+
+    /* =========================================
+       ПОЛУЧЕНИЕ СПИСКА
+       ========================================= */
+
+    function convertSnapshot(
+      snapshot
+    ) {
+
+      const result = [];
+
+
+      snapshot.forEach(
+        child => {
+
+          const value =
+            child.val();
+
+
+          if (
+            value &&
+            typeof value ===
+            "object"
+          ) {
+
+            result.push({
+
+              key:
+                child.key,
+
+              ...value
+
+            });
+
+          }
+
+        }
+      );
+
+
+      result.sort(
+        (a, b) => {
+
+          const timeA =
+            Number(
+              a.createdAt || 0
+            );
+
+
+          const timeB =
+            Number(
+              b.createdAt || 0
+            );
+
+
+          return timeA - timeB;
+
+        }
+      );
+
+
+      return result;
+
+    }
+
+
+    /* =========================================
+       РАЗДЕЛЕНИЕ НА МЕСТА И ОЧЕРЕДЬ
+       ========================================= */
+
+    function splitBookings(
+      allBookings
+    ) {
+
+      const active =
+        allBookings.filter(
+          booking => {
+
+            return (
+              booking.status ===
+                "booked" ||
+
+              booking.status ===
+                "waitlist" ||
+
+              !booking.status
+            );
+
+          }
+        );
+
+
+      const booked =
+        active.slice(
+          0,
+          MAX_PLACES
+        );
+
+
+      const queue =
+        active.slice(
+          MAX_PLACES
+        );
+
+
+      return {
+
+        booked,
+        queue
+
+      };
+
+    }
+
+
+    /* =========================================
+       ОБНОВЛЕНИЕ ПУБЛИЧНОГО СПИСКА
+       ========================================= */
+
+    function renderPublicLists(
       booked,
       queue
     ) {
 
 
-      bookedList.innerHTML =
+      publicBookedCount.textContent =
+        booked.length +
+        "/" +
+        MAX_PLACES;
+
+
+      publicQueueCount.textContent =
+        queue.length;
+
+
+      placesCounter.textContent =
+        booked.length +
+        "/" +
+        MAX_PLACES;
+
+
+      const percent =
+        Math.min(
+          100,
+          (
+            booked.length /
+            MAX_PLACES
+          ) * 100
+        );
+
+
+      progressBar.style.width =
+        percent + "%";
+
+
+      queueCounter.textContent =
+        "🟡 В очереди: " +
+        queue.length;
+
+
+      /* =====================================
+         ОСНОВНЫЕ МЕСТА
+         ===================================== */
+
+      publicBookedList.innerHTML =
         "";
 
-
-      queueList.innerHTML =
-        "";
-
-
-      /*
-       * Основные места
-       */
 
       if (
         booked.length === 0
       ) {
 
-        bookedList.innerHTML =
+        publicBookedList.innerHTML =
           '<div class="empty">' +
-          'Пока никто не записан' +
+          'Пока никто не записался' +
           '</div>';
 
       }
 
 
       booked.forEach(
-
         (booking, index) => {
 
-          const card =
+          const item =
             document.createElement(
               "div"
             );
 
 
-          card.className =
-            "user-card";
+          item.className =
+            "user-item";
 
 
-          const name =
-            booking.username ||
-            booking.firstName ||
-            "Пользователь";
+          item.innerHTML =
+
+            '<div class="user-number">' +
+
+              (index + 1) +
+
+            '</div>' +
+
+            '<div class="user-name">' +
+
+              escapeHtml(
+                getDisplayName(
+                  booking
+                )
+              ) +
+
+            '</div>';
 
 
-          card.innerHTML = `
-
-            <div class="user-name">
-
-              ${index + 1}.
-              ${escapeHtml(name)}
-
-            </div>
-
-            <div class="user-status">
-
-              ${
-                booking.paid === true
-
-                  ? '<span class="paid">✅ Оплачено</span>'
-
-                  : '<span class="not-paid">❌ Не оплачено</span>'
-              }
-
-            </div>
-
-            <button
-              class="admin-button"
-              data-key="${booking.key}"
-            >
-
-              ${
-                booking.paid === true
-
-                  ? "❌ Отменить оплату"
-
-                  : "✅ Оплачено"
-              }
-
-            </button>
-
-          `;
-
-
-          const button =
-            card.querySelector(
-              ".admin-button"
-            );
-
-
-          button.addEventListener(
-            "click",
-            () => {
-
-              togglePaid(
-                booking.key,
-                booking.paid === true
-              );
-
-            }
-          );
-
-
-          bookedList.appendChild(
-            card
+          publicBookedList.appendChild(
+            item
           );
 
         }
-
       );
 
 
-      /*
-       * Очередь
-       */
+      /* =====================================
+         ОЧЕРЕДЬ
+         ===================================== */
+
+      publicQueueList.innerHTML =
+        "";
+
 
       if (
         queue.length === 0
       ) {
 
-        queueList.innerHTML =
+        publicQueueList.innerHTML =
           '<div class="empty">' +
           'Очередь пустая' +
           '</div>';
@@ -969,127 +2138,559 @@
 
 
       queue.forEach(
-
         (booking, index) => {
 
-          const card =
+          const item =
             document.createElement(
               "div"
             );
 
 
-          card.className =
-            "user-card";
+          item.className =
+            "user-item queue-item";
 
 
-          const name =
-            booking.username ||
-            booking.firstName ||
-            "Пользователь";
+          item.innerHTML =
+
+            '<div class="user-number queue-number">' +
+
+              (index + 1) +
+
+            '</div>' +
+
+            '<div class="user-name">' +
+
+              escapeHtml(
+                getDisplayName(
+                  booking
+                )
+              ) +
+
+            '</div>';
 
 
-          card.innerHTML = `
+          publicQueueList.appendChild(
+            item
+          );
 
-            <div class="user-name">
+        }
+      );
 
-              ${index + 1}.
-              ${escapeHtml(name)}
+    }
 
-            </div>
 
-            <div class="user-status">
+    /* =========================================
+       МОЯ ЗАПИСЬ
+       ========================================= */
 
-              ${
-                booking.paid === true
+    function findMyBooking(
+      allBookings
+    ) {
 
-                  ? '<span class="paid">✅ Оплачено</span>'
+      if (
+        !currentUser
+      ) {
 
-                  : '<span class="not-paid">❌ Не оплачено</span>'
-              }
+        return null;
 
-            </div>
+      }
 
-            <button
-              class="admin-button"
-              data-key="${booking.key}"
-            >
 
-              ${
-                booking.paid === true
+      return (
+        allBookings.find(
+          booking => {
+
+            return (
+              String(
+                booking.telegramId
+              ) ===
+              String(
+                currentUser.id
+              )
+            );
+
+          }
+        ) ||
+        null
+      );
+
+    }
+
+
+    /* =========================================
+       ОБНОВЛЕНИЕ МОЕГО СТАТУСА
+       ========================================= */
+
+    function renderMyStatus(
+      booked,
+      queue,
+      allBookings
+    ) {
+
+
+      if (
+        !currentUser
+      ) {
+
+        statusBox.textContent =
+          "⚠️ Открой приложение через Telegram";
+
+        statusBox.className =
+          "status-box status-warning";
+
+        bookingButton.style.display =
+          "none";
+
+        cancelButton.style.display =
+          "none";
+
+        return;
+
+      }
+
+
+      const myBooking =
+        findMyBooking(
+          allBookings
+        );
+
+
+      /* =====================================
+         НЕТ ЗАПИСИ
+         ===================================== */
+
+      if (
+        !myBooking
+      ) {
+
+        myBookingCard.classList
+          .remove(
+            "visible"
+          );
+
+
+        cancelButton.style.display =
+          "none";
+
+
+        bookingButton.style.display =
+          "block";
+
+
+        if (
+          booked.length <
+          MAX_PLACES
+        ) {
+
+          statusBox.textContent =
+            "🟢 Есть свободные места";
+
+          statusBox.className =
+            "status-box status-success";
+
+
+          bookingButton.textContent =
+            "Записаться";
+
+        }
+
+        else {
+
+          statusBox.textContent =
+            "🔴 Все места заняты. Можно встать в очередь";
+
+          statusBox.className =
+            "status-box status-warning";
+
+
+          bookingButton.textContent =
+            "🟡 Встать в очередь";
+
+        }
+
+
+        myPaymentStatus.style.display =
+          "none";
+
+
+        return;
+
+      }
+
+
+      /* =====================================
+         ПОЛЬЗОВАТЕЛЬ ЗАПИСАН
+         ===================================== */
+
+      bookingButton.style.display =
+        "none";
+
+
+      cancelButton.style.display =
+        "block";
+
+
+      myBookingCard.classList
+        .add(
+          "visible"
+        );
+
+
+      const currentIndex =
+        allBookings.findIndex(
+          booking =>
+            booking.key ===
+            myBooking.key
+        );
+
+
+      if (
+        currentIndex <
+        MAX_PLACES
+      ) {
+
+        const place =
+          currentIndex + 1;
+
+
+        statusBox.textContent =
+          "✅ Ты записан на тренировку. Место №" +
+          place;
+
+
+        statusBox.className =
+          "status-box status-success";
+
+
+        myBookingText.innerHTML =
+
+          "Ты находишься в основных местах.<br>" +
+
+          "Твоё место: <b>№" +
+          place +
+          "</b><br>" +
+
+          "Стоимость: <b>" +
+          TRAINING_PRICE +
+          " ₽</b>";
+
+      }
+
+      else {
+
+        const queuePosition =
+          currentIndex -
+          MAX_PLACES +
+          1;
+
+
+        statusBox.textContent =
+          "🟡 Ты в очереди №" +
+          queuePosition;
+
+
+        statusBox.className =
+          "status-box status-warning";
+
+
+        myBookingText.innerHTML =
+
+          "Ты находишься в очереди.<br>" +
+
+          "Позиция: <b>№" +
+          queuePosition +
+          "</b><br>" +
+
+          "Если освободится место, оно перейдёт тебе автоматически.";
+
+      }
+
+
+      /* =====================================
+         СТАТУС ОПЛАТЫ
+         ===================================== */
+
+      myPaymentStatus.style.display =
+        "block";
+
+
+      if (
+        myBooking.paid ===
+        true
+      ) {
+
+        myPaymentStatus.textContent =
+          "💳 Оплата: ✅ Оплачено";
+
+
+        myPaymentStatus.className =
+          "payment-status payment-paid";
+
+      }
+
+      else {
+
+        myPaymentStatus.textContent =
+          "💳 Оплата: ❌ Не оплачено";
+
+
+        myPaymentStatus.className =
+          "payment-status payment-not-paid";
+
+      }
+
+    }
+
+
+    /* =========================================
+       АДМИН-ПАНЕЛЬ
+       ========================================= */
+
+    function renderAdminPanel(
+      allBookings
+    ) {
+
+
+      if (
+        !isAdmin
+      ) {
+
+        return;
+
+      }
+
+
+      const activeBookings =
+        allBookings.filter(
+          booking => {
+
+            return (
+              booking.status ===
+                "booked" ||
+
+              booking.status ===
+                "waitlist" ||
+
+              !booking.status
+            );
+
+          }
+        );
+
+
+      const paidCount =
+        activeBookings.filter(
+          booking =>
+            booking.paid ===
+            true
+        ).length;
+
+
+      const unpaidCount =
+        activeBookings.length -
+        paidCount;
+
+
+      adminSummary.innerHTML =
+
+        "👥 Всего записей: <b>" +
+        activeBookings.length +
+        "</b><br>" +
+
+        "💳 Оплачено: <b>" +
+        paidCount +
+        "</b><br>" +
+
+        "❌ Не оплачено: <b>" +
+        unpaidCount +
+        "</b>";
+
+
+      adminUsersList.innerHTML =
+        "";
+
+
+      if (
+        activeBookings.length ===
+        0
+      ) {
+
+        adminUsersList.innerHTML =
+          '<div class="empty">' +
+          'Пока никто не записался' +
+          '</div>';
+
+        return;
+
+      }
+
+
+      activeBookings.forEach(
+        (booking, index) => {
+
+          const item =
+            document.createElement(
+              "div"
+            );
+
+
+          item.className =
+            "admin-user";
+
+
+          const placeText =
+            index <
+            MAX_PLACES
+
+              ? "Основное место №" +
+                (index + 1)
+
+              : "Очередь №" +
+                (
+                  index -
+                  MAX_PLACES +
+                  1
+                );
+
+
+          const paymentText =
+            booking.paid ===
+            true
+
+              ? "💳 Оплачено"
+
+              : "💳 Не оплачено";
+
+
+          const paymentClass =
+            booking.paid ===
+            true
+
+              ? "admin-paid"
+
+              : "admin-unpaid";
+
+
+          item.innerHTML =
+
+            '<div class="admin-user-top">' +
+
+              '<div>' +
+
+                '<div class="admin-user-name">' +
+
+                  escapeHtml(
+                    getDisplayName(
+                      booking
+                    )
+                  ) +
+
+                '</div>' +
+
+                '<div class="admin-user-place">' +
+
+                  placeText +
+
+                '</div>' +
+
+              '</div>' +
+
+            '</div>' +
+
+            '<div class="admin-payment ' +
+              paymentClass +
+            '">' +
+
+              paymentText +
+
+            '</div>' +
+
+            '<button ' +
+
+              'class="admin-small-button" ' +
+
+              'data-booking-key="' +
+                escapeHtml(
+                  booking.key
+                ) +
+              '" ' +
+
+              'data-paid="' +
+                (
+                  booking.paid ===
+                  true
+                    ? "true"
+                    : "false"
+                ) +
+              '">' +
+
+              (
+                booking.paid ===
+                true
 
                   ? "❌ Отменить оплату"
 
-                  : "✅ Оплачено"
-              }
+                  : "✅ Отметить как оплачено"
+              ) +
 
-            </button>
-
-          `;
+            '</button>';
 
 
           const button =
-            card.querySelector(
-              ".admin-button"
+            item.querySelector(
+              ".admin-small-button"
             );
 
 
           button.addEventListener(
             "click",
-            () => {
+            async () => {
 
-              togglePaid(
-                booking.key,
-                booking.paid === true
+              const key =
+                button.dataset
+                  .bookingKey;
+
+
+              const currentPaid =
+                button.dataset
+                  .paid ===
+                "true";
+
+
+              await setPaymentStatus(
+                key,
+                !currentPaid
               );
 
             }
           );
 
 
-          queueList.appendChild(
-            card
+          adminUsersList.appendChild(
+            item
           );
 
         }
-
       );
 
     }
 
 
-    /*
-     * =================================
-     * ЗАЩИТА HTML
-     * =================================
-     */
+    /* =========================================
+       ИЗМЕНЕНИЕ СТАТУСА ОПЛАТЫ
+       ========================================= */
 
-    function escapeHtml(text) {
-
-      return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-
-    }
-
-
-    /*
-     * =================================
-     * ИЗМЕНЕНИЕ ОПЛАТЫ
-     * =================================
-     */
-
-    async function togglePaid(
-      userKey,
-      currentPaid
+    async function setPaymentStatus(
+      bookingKey,
+      paid
     ) {
 
 
-      if (!isAdmin) {
+      if (
+        !isAdmin
+      ) {
 
-        tg.showAlert(
+        showMessage(
           "Нет доступа."
         );
 
@@ -1100,48 +2701,43 @@
 
       try {
 
-        await runTransaction(
+        await database
+          .ref(
+            TRAINING_PATH +
+            "/" +
+            bookingKey
+          )
+          .update({
 
-          bookingsRef,
+            paid:
+              paid,
 
-          currentData => {
+            paidAt:
+              paid
+                ? Date.now()
+                : null
 
-            if (!currentData) {
-              return;
-            }
-
-
-            if (
-              !currentData[userKey]
-            ) {
-              return;
-            }
-
-
-            currentData[userKey].paid =
-              !currentPaid;
+          });
 
 
-            currentData[userKey].paidAt =
-              Date.now();
-
-
-            return currentData;
-
-          }
-
+        haptic(
+          "success"
         );
 
 
       }
 
-      catch (error) {
+      catch (
+        error
+      ) {
 
-        console.error(error);
+        console.error(
+          error
+        );
 
 
-        tg.showAlert(
-          "❌ Не удалось изменить оплату."
+        showMessage(
+          "❌ Не удалось изменить статус оплаты."
         );
 
       }
@@ -1149,50 +2745,19 @@
     }
 
 
-    /*
-     * =================================
-     * REALTIME
-     * =================================
-     */
+    /* =========================================
+       ЗАПИСЬ
+       ========================================= */
 
-    onValue(
-
-      bookingsRef,
-
-      snapshot => {
-
-        updateInterface(
-          snapshot.val()
-        );
-
-      },
-
-      error => {
-
-        console.error(error);
+    async function createBooking() {
 
 
-        status.innerText =
-          "❌ Ошибка подключения к базе";
+      if (
+        !currentUser
+      ) {
 
-      }
-
-    );
-
-
-    /*
-     * =================================
-     * ЗАПИСЬ
-     * =================================
-     */
-
-    async function joinTraining() {
-
-
-      if (!telegramUser) {
-
-        tg.showAlert(
-          "Открой приложение через Telegram"
+        showMessage(
+          "Открой приложение через Telegram."
         );
 
         return;
@@ -1200,123 +2765,36 @@
       }
 
 
-      joinButton.disabled =
+      bookingButton.disabled =
         true;
 
 
       try {
 
-        const result =
-          await runTransaction(
-
-            bookingsRef,
-
-            currentData => {
-
-              const data =
-                currentData || {};
+        const snapshot =
+          await bookingsRef.once(
+            "value"
+          );
 
 
-              const alreadyExists =
-                Object.values(data)
-                  .some(
-
-                    booking =>
-
-                      String(
-                        booking.telegramId
-                      ) ===
-
-                      String(
-                        telegramUser.id
-                      ) &&
-
-                      (
-                        booking.status ===
-                        "booked" ||
-
-                        booking.status ===
-                        "waitlist"
-                      )
-
-                  );
+        const allBookings =
+          convertSnapshot(
+            snapshot
+          );
 
 
-              if (
-                alreadyExists
-              ) {
-
-                return;
-
-              }
-
-
-              const booked =
-                Object.values(data)
-                  .filter(
-
-                    booking =>
-
-                      booking.status ===
-                      "booked"
-
-                  );
-
-
-              const newStatus =
-                booked.length <
-                MAX_PLACES
-
-                  ? "booked"
-
-                  : "waitlist";
-
-
-              const userKey =
-                "user_" +
-                telegramUser.id;
-
-
-              data[userKey] = {
-
-                telegramId:
-                  telegramUser.id,
-
-                username:
-                  getUsername(),
-
-                firstName:
-                  telegramUser.first_name ||
-                  "",
-
-                status:
-                  newStatus,
-
-                paid:
-                  false,
-
-                price:
-                  TRAINING_PRICE,
-
-                createdAt:
-                  Date.now()
-
-              };
-
-
-              return data;
-
-            }
-
+        const existing =
+          findMyBooking(
+            allBookings
           );
 
 
         if (
-          !result.committed
+          existing
         ) {
 
-          tg.showAlert(
-            "Ты уже записан."
+          showMessage(
+            "Ты уже записан на эту тренировку."
           );
 
           return;
@@ -1324,66 +2802,129 @@
         }
 
 
-        const resultData =
-          result.snapshot.val() ||
-          {};
+        const active =
+          allBookings.filter(
+            booking => {
 
+              return (
+                booking.status ===
+                  "booked" ||
 
-        const myBooking =
-          Object.values(
-            resultData
-          ).find(
+                booking.status ===
+                  "waitlist" ||
 
-            booking =>
+                !booking.status
+              );
 
-              String(
-                booking.telegramId
-              ) ===
-
-              String(
-                telegramUser.id
-              )
-
+            }
           );
 
 
+        const status =
+          active.length <
+          MAX_PLACES
+
+            ? "booked"
+
+            : "waitlist";
+
+
+        const newBookingRef =
+          bookingsRef.push();
+
+
+        await newBookingRef.set({
+
+          telegramId:
+            currentUser.id,
+
+          username:
+            currentUser.username ||
+            null,
+
+          firstName:
+            currentUser.firstName ||
+            "",
+
+          lastName:
+            currentUser.lastName ||
+            "",
+
+          status:
+            status,
+
+          paid:
+            false,
+
+          price:
+            TRAINING_PRICE,
+
+          createdAt:
+            Date.now()
+
+        });
+
+
+        haptic(
+          "success"
+        );
+
+
         if (
-          myBooking?.status ===
+          status ===
           "booked"
         ) {
 
-          tg.showAlert(
+          showMessage(
+
             "✅ Ты записан на тренировку!\n\n" +
-            getUsername()
+
+            "Место: " +
+            (
+              active.length +
+              1
+            ) +
+
+            "\nСтоимость: " +
+            TRAINING_PRICE +
+            " ₽"
+
           );
 
         }
 
         else {
 
-          tg.showAlert(
+          showMessage(
+
             "🟡 Все 12 мест заняты.\n\n" +
+
             "Ты добавлен в очередь."
+
           );
 
         }
 
       }
 
-      catch (error) {
+      catch (
+        error
+      ) {
 
-        console.error(error);
+        console.error(
+          error
+        );
 
 
-        tg.showAlert(
-          "❌ Не удалось записаться."
+        showMessage(
+          "❌ Не удалось записаться.\nПопробуй ещё раз."
         );
 
       }
 
       finally {
 
-        joinButton.disabled =
+        bookingButton.disabled =
           false;
 
       }
@@ -1391,156 +2932,131 @@
     }
 
 
-    /*
-     * =================================
-     * ОТМЕНА
-     * =================================
-     */
+    /* =========================================
+       ОТМЕНА ЗАПИСИ
+       ========================================= */
 
-    async function cancelTraining() {
+    async function cancelMyBooking() {
 
 
-      if (!telegramUser) {
+      if (
+        !currentUser
+      ) {
+
         return;
+
       }
 
 
-      joinButton.disabled =
+      const snapshot =
+        await bookingsRef.once(
+          "value"
+        );
+
+
+      const allBookings =
+        convertSnapshot(
+          snapshot
+        );
+
+
+      const myBooking =
+        findMyBooking(
+          allBookings
+        );
+
+
+      if (
+        !myBooking
+      ) {
+
+        showMessage(
+          "Активная запись не найдена."
+        );
+
+        return;
+
+      }
+
+
+      let confirmed =
+        true;
+
+
+      if (
+        telegram &&
+        typeof telegram.showConfirm ===
+        "function"
+      ) {
+
+        confirmed =
+          await new Promise(
+            resolve => {
+
+              telegram.showConfirm(
+                "Отменить запись?",
+                resolve
+              );
+
+            }
+          );
+
+      }
+
+      else {
+
+        confirmed =
+          confirm(
+            "Отменить запись?"
+          );
+
+      }
+
+
+      if (
+        !confirmed
+      ) {
+
+        return;
+
+      }
+
+
+      cancelButton.disabled =
         true;
 
 
       try {
 
-        const result =
-          await runTransaction(
 
-            bookingsRef,
+        /*
+         * Получаем актуальные данные
+         */
 
-            currentData => {
-
-              if (!currentData) {
-                return;
-              }
-
-
-              const data =
-                currentData;
+        const freshSnapshot =
+          await bookingsRef.once(
+            "value"
+          );
 
 
-              const myKey =
-                Object.keys(data)
-                  .find(
-
-                    key =>
-
-                      String(
-                        data[key].telegramId
-                      ) ===
-
-                      String(
-                        telegramUser.id
-                      ) &&
-
-                      (
-                        data[key].status ===
-                        "booked" ||
-
-                        data[key].status ===
-                        "waitlist"
-                      )
-
-                  );
+        const freshBookings =
+          convertSnapshot(
+            freshSnapshot
+          );
 
 
-              if (!myKey) {
-                return;
-              }
-
-
-              const wasBooked =
-                data[myKey].status ===
-                "booked";
-
-
-              delete data[myKey];
-
-
-              /*
-               * Переводим первого
-               * из очереди
-               */
-
-              if (wasBooked) {
-
-                const bookedNow =
-                  Object.values(data)
-                    .filter(
-
-                      booking =>
-
-                        booking.status ===
-                        "booked"
-
-                    )
-                    .length;
-
-
-                if (
-                  bookedNow <
-                  MAX_PLACES
-                ) {
-
-                  const queue =
-                    Object.entries(data)
-                      .filter(
-
-                        ([key, booking]) =>
-
-                          booking.status ===
-                          "waitlist"
-
-                      )
-                      .sort(
-
-                        (a, b) =>
-
-                          a[1].createdAt -
-                          b[1].createdAt
-
-                      );
-
-
-                  if (
-                    queue.length > 0
-                  ) {
-
-                    const nextKey =
-                      queue[0][0];
-
-
-                    data[nextKey].status =
-                      "booked";
-
-                  }
-
-                }
-
-              }
-
-
-              return data;
-
-            }
-
+        const freshMyBooking =
+          findMyBooking(
+            freshBookings
           );
 
 
         if (
-          !result.committed
+          !freshMyBooking
         ) {
 
-          tg.showAlert(
-            "Запись не найдена."
+          showMessage(
+            "Запись уже отменена."
           );
 
           return;
@@ -1548,18 +3064,128 @@
         }
 
 
-        tg.showAlert(
+        /*
+         * Индекс до удаления
+         */
+
+        const oldIndex =
+          freshBookings.findIndex(
+            booking =>
+              booking.key ===
+              freshMyBooking.key
+          );
+
+
+        /*
+         * Удаляем пользователя
+         */
+
+        await bookingsRef
+          .child(
+            freshMyBooking.key
+          )
+          .remove();
+
+
+        /*
+         * Если пользователь был
+         * на основном месте,
+         * первый человек очереди
+         * автоматически становится
+         * записанным.
+         */
+
+        if (
+          oldIndex <
+          MAX_PLACES
+        ) {
+
+          const afterSnapshot =
+            await bookingsRef.once(
+              "value"
+            );
+
+
+          const afterBookings =
+            convertSnapshot(
+              afterSnapshot
+            );
+
+
+          const afterActive =
+            afterBookings.filter(
+              booking => {
+
+                return (
+                  booking.status ===
+                    "booked" ||
+
+                  booking.status ===
+                    "waitlist" ||
+
+                  !booking.status
+                );
+
+              }
+            );
+
+
+          /*
+           * Если есть очередь,
+           * переводим первого.
+           */
+
+          const firstQueue =
+            afterActive
+              .slice(
+                MAX_PLACES
+              )[0];
+
+
+          if (
+            firstQueue
+          ) {
+
+            await bookingsRef
+              .child(
+                firstQueue.key
+              )
+              .update({
+
+                status:
+                  "booked",
+
+                promotedAt:
+                  Date.now()
+
+              });
+
+          }
+
+        }
+
+
+        haptic(
+          "success"
+        );
+
+
+        showMessage(
           "✅ Запись отменена."
         );
 
       }
 
-      catch (error) {
+      catch (
+        error
+      ) {
 
-        console.error(error);
+        console.error(
+          error
+        );
 
 
-        tg.showAlert(
+        showMessage(
           "❌ Не удалось отменить запись."
         );
 
@@ -1567,7 +3193,7 @@
 
       finally {
 
-        joinButton.disabled =
+        cancelButton.disabled =
           false;
 
       }
@@ -1575,140 +3201,182 @@
     }
 
 
-    /*
-     * =================================
-     * КНОПКА ЗАПИСИ
-     * =================================
-     */
+    /* =========================================
+       REALTIME FIREBASE
+       ========================================= */
 
-    joinButton.addEventListener(
-
-      "click",
-
-      async () => {
-
-        if (!telegramUser) {
-          return;
-        }
+    bookingsRef.on(
+      "value",
+      snapshot => {
 
 
         try {
 
-          const snapshot =
-            await new Promise(
-
-              resolve => {
-
-                onValue(
-
-                  bookingsRef,
-
-                  snap =>
-                    resolve(snap),
-
-                  {
-                    onlyOnce: true
-                  }
-
-                );
-
-              }
-
+          const allBookings =
+            convertSnapshot(
+              snapshot
             );
 
 
-          const data =
-            snapshot.val() ||
-            {};
+          /*
+           * Приводим старые записи
+           * к правильной структуре.
+           */
 
+          const activeBookings =
+            allBookings.filter(
+              booking => {
 
-          const myBooking =
-            Object.values(data)
-              .find(
-
-                booking =>
-
-                  String(
-                    booking.telegramId
-                  ) ===
-
-                  String(
-                    telegramUser.id
-                  ) &&
-
-                  (
-                    booking.status ===
+                return (
+                  booking.status ===
                     "booked" ||
 
-                    booking.status ===
-                    "waitlist"
-                  )
+                  booking.status ===
+                    "waitlist" ||
 
-              );
+                  !booking.status
+                );
 
-
-          if (myBooking) {
-
-            await cancelTraining();
-
-          }
-
-          else {
-
-            await joinTraining();
-
-          }
-
-        }
-
-        catch (error) {
-
-          console.error(error);
+              }
+            );
 
 
-          tg.showAlert(
-            "Произошла ошибка."
+          /*
+           * Первые 12 — основные.
+           */
+
+          const booked =
+            activeBookings.slice(
+              0,
+              MAX_PLACES
+            );
+
+
+          /*
+           * Остальные — очередь.
+           */
+
+          const queue =
+            activeBookings.slice(
+              MAX_PLACES
+            );
+
+
+          renderPublicLists(
+            booked,
+            queue
           );
 
+
+          renderMyStatus(
+            booked,
+            queue,
+            activeBookings
+          );
+
+
+          if (
+            isAdmin
+          ) {
+
+            renderAdminPanel(
+              activeBookings
+            );
+
+          }
+
         }
 
-      }
-
-    );
-
-
-    /*
-     * =================================
-     * КНОПКА ОПЛАТЫ
-     * =================================
-     */
-
-    paymentButton.addEventListener(
-
-      "click",
-
-      () => {
-
-        if (
-          paymentInfo.style.display ===
-          "block"
+        catch (
+          error
         ) {
 
-          paymentInfo.style.display =
-            "none";
+          console.error(
+            error
+          );
+
+          statusBox.textContent =
+            "❌ Ошибка обработки данных";
+
+          statusBox.className =
+            "status-box status-error";
 
         }
 
-        else {
+      },
 
-          paymentInfo.style.display =
-            "block";
+      error => {
 
-        }
+        console.error(
+          error
+        );
+
+
+        statusBox.textContent =
+          "❌ Ошибка подключения к Firebase";
+
+        statusBox.className =
+          "status-box status-error";
 
       }
 
     );
+
+
+    /* =========================================
+       КНОПКА ЗАПИСИ
+       ========================================= */
+
+    bookingButton.addEventListener(
+      "click",
+      createBooking
+    );
+
+
+    /* =========================================
+       КНОПКА ОТМЕНЫ
+       ========================================= */
+
+    cancelButton.addEventListener(
+      "click",
+      cancelMyBooking
+    );
+
+
+    /* =========================================
+       КНОПКА ОПЛАТЫ
+       ========================================= */
+
+    paymentButton.addEventListener(
+      "click",
+      () => {
+
+        paymentInfo.classList.toggle(
+          "open"
+        );
+
+      }
+    );
+
+
+    /* =========================================
+       НАЧАЛЬНОЕ СОСТОЯНИЕ
+       ========================================= */
+
+    if (
+      !currentUser
+    ) {
+
+      statusBox.textContent =
+        "⚠️ Открой приложение через Telegram";
+
+      statusBox.className =
+        "status-box status-warning";
+
+      bookingButton.style.display =
+        "none";
+
+    }
 
 
   </script>
