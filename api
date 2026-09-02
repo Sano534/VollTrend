@@ -1,1 +1,341 @@
+const BOT_TOKEN = process.env.BOT_TOKEN;
 
+const MINI_APP_URL = "https://voll-trend.vercel.app";
+
+const FIREBASE_URL =
+  "https://volltrend-33497-default-rtdb.europe-west1.firebasedatabase.app";
+
+const TRAINING_ID = "30-08-2026";
+const MAX_PLACES = 12;
+const PRICE = 400;
+
+const BOOKINGS_URL =
+  `${FIREBASE_URL}/trainings/${TRAINING_ID}/bookings.json`;
+
+async function telegram(method, body) {
+  const response = await fetch(
+    `https://api.telegram.org/bot${BOT_TOKEN}/${method}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    }
+  );
+
+  return response.json();
+}
+
+async function getBookings() {
+  const response = await fetch(BOOKINGS_URL);
+
+  if (!response.ok) {
+    throw new Error("Firebase error");
+  }
+
+  const data = await response.json();
+
+  if (!data || typeof data !== "object") {
+    return [];
+  }
+
+  return Object.entries(data)
+    .map(([key, value]) => ({
+      key,
+      ...value
+    }))
+    .filter(
+      booking =>
+        booking &&
+        (
+          booking.status === "booked" ||
+          booking.status === "waitlist" ||
+          !booking.status
+        )
+    )
+    .sort(
+      (a, b) =>
+        Number(a.createdAt || 0) -
+        Number(b.createdAt || 0)
+    );
+}
+
+function getName(booking) {
+  if (booking.username) {
+    return booking.username;
+  }
+
+  if (booking.firstName) {
+    return booking.firstName;
+  }
+
+  return "Пользователь";
+}
+
+function menuKeyboard() {
+  return {
+    inline_keyboard: [
+      [
+        {
+          text: "👥 Список записавшихся",
+          callback_data: "show_bookings"
+        }
+      ],
+      [
+        {
+          text: "🏐 Открыть приложение",
+          web_app: {
+            url: MINI_APP_URL
+          }
+        }
+      ]
+    ]
+  };
+}
+
+function formatBookings(bookings) {
+  const booked = bookings.slice(0, MAX_PLACES);
+  const queue = bookings.slice(MAX_PLACES);
+
+  let text =
+    "🏐 <b>Волейбольная тренировка</b>\n\n" +
+    "📅 30 августа 2026\n" +
+    "⏰ 20:00\n" +
+    "📍 ГТС\n" +
+    "💰 400 ₽\n\n";
+
+  text +=
+    `<b>👥 Основные места — ${booked.length}/${MAX_PLACES}</b>\n\n`;
+
+  if (booked.length === 0) {
+    text += "Пока никто не записался.\n";
+  } else {
+    booked.forEach((booking, index) => {
+      const paid =
+        booking.paid === true
+          ? " ✅"
+          : "";
+
+      text +=
+        `${index + 1}. ${escapeHtml(getName(booking))}${paid}\n`;
+    });
+  }
+
+  text += "\n";
+
+  text +=
+    `<b>🟡 Очередь — ${queue.length}</b>\n\n`;
+
+  if (queue.length === 0) {
+    text += "Очередь пустая.\n";
+  } else {
+    queue.forEach((booking, index) => {
+      text +=
+        `${index + 1}. ${escapeHtml(getName(booking))}\n`;
+    });
+  }
+
+  text +=
+    "\n<i>✅ — оплата подтверждена администратором</i>";
+
+  return text;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+async function showBookings(chatId, messageId = null) {
+  try {
+    const bookings = await getBookings();
+
+    const text = formatBookings(bookings);
+
+    const body = {
+      chat_id: chatId,
+      text,
+      parse_mode: "HTML",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "🔄 Обновить",
+              callback_data: "show_bookings"
+            }
+          ],
+          [
+            {
+              text: "🏐 Открыть приложение",
+              web_app: {
+                url: MINI_APP_URL
+              }
+            }
+          ],
+          [
+            {
+              text: "◀️ Назад",
+              callback_data: "back_to_menu"
+            }
+          ]
+        ]
+      }
+    };
+
+    if (messageId) {
+      body.message_id = messageId;
+
+      return telegram(
+        "editMessageText",
+        body
+      );
+    }
+
+    return telegram(
+      "sendMessage",
+      body
+    );
+
+  } catch (error) {
+    console.error(error);
+
+    return telegram(
+      "sendMessage",
+      {
+        chat_id: chatId,
+        text:
+          "❌ Не удалось получить список участников."
+      }
+    );
+  }
+}
+
+async function sendMenu(chatId) {
+  return telegram(
+    "sendMessage",
+    {
+      chat_id: chatId,
+      text:
+        "🏐 <b>VollTrend</b>\n\n" +
+        "Выбери действие:",
+      parse_mode: "HTML",
+      reply_markup: menuKeyboard()
+    }
+  );
+}
+
+export default async function handler(req, res) {
+
+  if (req.method !== "POST") {
+    return res.status(200).json({
+      ok: true,
+      message: "VollTrend bot"
+    });
+  }
+
+  try {
+
+    const update = req.body;
+
+    /*
+     * /start
+     */
+
+    if (
+      update.message &&
+      update.message.text === "/start"
+    ) {
+
+      await sendMenu(
+        update.message.chat.id
+      );
+
+      return res.status(200).json({
+        ok: true
+      });
+    }
+
+    /*
+     * Нажатие inline-кнопок
+     */
+
+    if (update.callback_query) {
+
+      const callback =
+        update.callback_query;
+
+      const chatId =
+        callback.message.chat.id;
+
+      const messageId =
+        callback.message.message_id;
+
+      await telegram(
+        "answerCallbackQuery",
+        {
+          callback_query_id:
+            callback.id
+        }
+      );
+
+      if (
+        callback.data ===
+        "show_bookings"
+      ) {
+
+        await showBookings(
+          chatId,
+          messageId
+        );
+
+        return res.status(200).json({
+          ok: true
+        });
+      }
+
+      if (
+        callback.data ===
+        "back_to_menu"
+      ) {
+
+        await telegram(
+          "editMessageText",
+          {
+            chat_id: chatId,
+            message_id: messageId,
+            text:
+              "🏐 <b>VollTrend</b>\n\n" +
+              "Выбери действие:",
+            parse_mode: "HTML",
+            reply_markup:
+              menuKeyboard()
+          }
+        );
+
+        return res.status(200).json({
+          ok: true
+        });
+      }
+    }
+
+    return res.status(200).json({
+      ok: true
+    });
+
+  } catch (error) {
+
+    console.error(
+      "BOT ERROR:",
+      error
+    );
+
+    return res.status(200).json({
+      ok: false
+    });
+  }
+}
